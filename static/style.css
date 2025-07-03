@@ -1,0 +1,14 @@
+:root { --header-height: 25vh; --sidebar-width: 25vw; }
+*, *::before, *::after { box-sizing: border-box; }
+body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; }
+.layout { display: grid; grid-template-rows: var(--header-height) 1fr; 
+         grid-template-columns: var(--sidebar-width) 1fr;
+         grid-template-areas: "header header" "sidebar main"; height: 100%; }
+header { grid-area: header; background: #2c3e50; color: white; 
+        display: flex; align-items: center; padding: 0 1rem; }
+nav { grid-area: sidebar; background: #ecf0f1; padding: 1rem; }
+main { grid-area: main; padding: 1rem; overflow: auto; }
+nav ul { list-style: none; margin: 0; padding: 0; }
+nav li + li { margin-top: 0.5rem; }
+nav a { text-decoration: none; color: #34495e; }
+nav a:hover { text-decoration: underline; }

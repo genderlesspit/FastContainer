@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lightweight Single-Pager</title>
+  <style>
+    :root {
+      --header-height: 25vh;
+      --sidebar-width: 25vw;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+    }
+    .layout {
+      display: grid;
+      grid-template-rows: var(--header-height) 1fr;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      grid-template-areas:
+        "header header"
+        "sidebar main";
+      height: 100%;
+    }
+    header {
+      grid-area: header;
+      background: #2c3e50;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+    }
+    nav {
+      grid-area: sidebar;
+      background: #ecf0f1;
+      padding: 1rem;
+    }
+    main {
+      grid-area: main;
+      padding: 1rem;
+      overflow: auto;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    nav li + li {
+      margin-top: 0.5rem;
+    }
+    nav a {
+      text-decoration: none;
+      color: #34495e;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header>
+      <h1>My App</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#reports">Reports</a></li>
+        <li><a href="#settings">Settings</a></li>
+      </ul>
+    </nav>
+    <main id="main">
+      <h2>Welcome</h2>
+      <p>Select a section from the sidebar.</p>
+    </main>
+  </div>
+</body>
+</html>

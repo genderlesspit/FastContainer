@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Containerizer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --header-height: 80px;
+            --dark-blue: #1e3a8a;
+            --darker-blue: #1e40af;
+        }
+        
+        body { margin: 0; padding: 0; }
+        
+        .layout { 
+            display: grid; 
+            grid-template-areas: 
+                "sidebar header"
+                "sidebar main";
+            grid-template-columns: var(--sidebar-width) 1fr;
+            grid-template-rows: var(--header-height) 1fr;
+            min-height: 100vh; 
+        }
+        
+        header.main-header { 
+            grid-area: header;
+            background: var(--dark-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        header.main-header h1 {
+            margin: 0;
+            color: white;
+        }
+        
+        .sidebar { 
+            grid-area: sidebar;
+            background: var(--dark-blue);
+            padding: 1rem;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar ul { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar li { 
+            margin-bottom: 0.5rem; 
+            width: 100%;
+        }
+        
+        .sidebar a { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem; 
+            padding: 0.75rem; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.8);
+            border-left: 3px solid transparent;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .sidebar a:hover { 
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .sidebar .page-icon { 
+            font-size: 1.2em; 
+            width: 24px; 
+            text-align: center; 
+        }
+        
+        .sidebar .page-title { 
+            font-weight: 500; 
+        }
+        
+        .content { 
+            grid-area: main;
+            padding: 2rem; 
+            overflow-y: auto;
+        }
+        
+        /* Color accents for sidebar links */
+        {% for page in pages %}
+        .sidebar a[data-page="{{ page.name }}"] {
+            {% if page.color %}border-left-color: {{ page.color }};{% endif %}
+        }
+        .sidebar a[data-page="{{ page.name }}"]:hover {
+            {% if page.color %}
+            background: {{ page.color }}25;
+            border-left-color: {{ page.color }};
+            {% endif %}
+        }
+        {% endfor %}
+        
+        @media (max-width: 768px) {
+            .layout {
+                grid-template-areas: 
+                    "header"
+                    "sidebar"  
+                    "main";
+                grid-template-columns: 1fr;
+                grid-template-rows: var(--header-height) auto 1fr;
+            }
+            
+            .sidebar {
+                padding: 0.5rem;
+            }
+            
+            .sidebar ul {
+                display: flex;
+                gap: 0.5rem;
+                overflow-x: auto;
+                padding: 0.5rem 0;
+            }
+            
+            .sidebar li {
+                margin-bottom: 0;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <header class="main-header">
+            <h1>Containerizer</h1>
+        </header>
+        
+        <nav class="sidebar">
+            <ul>
+                {% for page in pages %}
+                <li>
+                    <a href="#" 
+                       hx-get="/page/{{ page.name }}" 
+                       hx-target="#main-content"
+                       data-page="{{ page.name }}">
+                        {% if page.icon %}
+                        <span class="page-icon">{{ page.icon }}</span>
+                        {% endif %}
+                        <span class="page-title">{{ page.title }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <div id="main-content">
+                <h2>Welcome</h2>
+                <p>Select a service from the sidebar.</p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
