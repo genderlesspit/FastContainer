@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Sales Dashboard</title>
+    <meta name="description" content="A comprehensive sales dashboard built with Pico CSS.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <!-- Chart.js for charts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+      .metric-card {
+        background: var(--pico-card-background-color);
+        border: var(--pico-border-width) solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: var(--pico-spacing);
+        margin-bottom: var(--pico-spacing);
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+        color: var(--pico-primary);
+      }
+
+      .metric-label {
+        font-size: 0.875rem;
+        color: var(--pico-muted-color);
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .metric-change {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .positive { color: #28a745; }
+      .negative { color: #dc3545; }
+
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: var(--pico-spacing) 0;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--pico-spacing);
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+      }
+
+      .status-active { background-color: #28a745; }
+      .status-pending { background-color: #ffc107; }
+      .status-inactive { background-color: #dc3545; }
+
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .metric-value {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <div class="dashboard-header">
+        <hgroup>
+          <h1>Sales Dashboard</h1>
+          <p>Real-time sales performance and analytics</p>
+        </hgroup>
+        <nav>
+          <ul>
+            <li>
+              <details class="dropdown">
+                <summary role="button" class="secondary">Actions</summary>
+                <ul>
+                  <li><a href="#" onclick="refreshData()">Refresh Data</a></li>
+                  <li><a href="#" onclick="exportReport()">Export Report</a></li>
+                  <li><a href="#" onclick="toggleModal(event)" data-target="settings-modal">Settings</a></li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details class="dropdown">
+                <summary role="button" class="secondary">Theme</summary>
+                <ul>
+                  <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                  <li><a href="#" data-theme-switcher="light">Light</a></li>
+                  <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container">
+      <!-- Key Metrics -->
+      <section id="metrics">
+        <h2>Key Performance Indicators</h2>
+        <div class="grid">
+          <div class="metric-card">
+            <p class="metric-value" id="total-revenue">$847,293</p>
+            <p class="metric-label">Total Revenue</p>
+            <p class="metric-change positive">+12.5% from last month</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-value" id="total-sales">1,247</p>
+            <p class="metric-label">Total Sales</p>
+            <p class="metric-change positive">+8.3% from last month</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-value" id="avg-order">$679</p>
+            <p class="metric-label">Average Order Value</p>
+            <p class="metric-change negative">-2.1% from last month</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-value" id="conversion-rate">3.7%</p>
+            <p class="metric-label">Conversion Rate</p>
+            <p class="metric-change positive">+0.8% from last month</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Section -->
+      <section id="charts">
+        <div class="grid">
+          <div>
+            <h3>Revenue Trend</h3>
+            <div class="chart-container">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+          <div>
+            <h3>Sales by Category</h3>
+            <div class="chart-container">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Sales Table -->
+      <section id="recent-sales">
+        <h2>Recent Sales</h2>
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Product</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">#ORD-001</th>
+                <td>John Smith</td>
+                <td>Premium Software License</td>
+                <td>$1,299</td>
+                <td><span class="status-indicator status-active"></span>Completed</td>
+                <td>2025-07-03</td>
+              </tr>
+              <tr>
+                <th scope="row">#ORD-002</th>
+                <td>Sarah Johnson</td>
+                <td>Enterprise Solution</td>
+                <td>$5,499</td>
+                <td><span class="status-indicator status-pending"></span>Processing</td>
+                <td>2025-07-03</td>
+              </tr>
+              <tr>
+                <th scope="row">#ORD-003</th>
+                <td>Mike Wilson</td>
+                <td>Basic Plan</td>
+                <td>$299</td>
+                <td><span class="status-indicator status-active"></span>Completed</td>
+                <td>2025-07-02</td>
+              </tr>
+              <tr>
+                <th scope="row">#ORD-004</th>
+                <td>Emma Davis</td>
+                <td>Professional Package</td>
+                <td>$899</td>
+                <td><span class="status-indicator status-active"></span>Completed</td>
+                <td>2025-07-02</td>
+              </tr>
+              <tr>
+                <th scope="row">#ORD-005</th>
+                <td>Alex Brown</td>
+                <td>Custom Development</td>
+                <td>$3,299</td>
+                <td><span class="status-indicator status-pending"></span>In Progress</td>
+                <td>2025-07-01</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Sales Team Performance -->
+      <section id="team-performance">
+        <h2>Sales Team Performance</h2>
+        <div class="grid">
+          <article>
+            <header><strong>Top Performers This Month</strong></header>
+            <ul>
+              <li><strong>Alice Cooper</strong> - $127,500 (15 deals)</li>
+              <li><strong>Bob Martinez</strong> - $98,750 (12 deals)</li>
+              <li><strong>Carol White</strong> - $87,300 (11 deals)</li>
+            </ul>
+          </article>
+          <article>
+            <header><strong>Team Goals Progress</strong></header>
+            <p><strong>Monthly Target:</strong> $1,000,000</p>
+            <progress value="84" max="100">84%</progress>
+            <p><small>$847,293 of $1,000,000 (84% complete)</small></p>
+            <p><strong>Days Remaining:</strong> 28</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section id="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="grid">
+          <button class="outline">Add New Sale</button>
+          <button class="outline secondary">Generate Report</button>
+          <button class="outline contrast">View Analytics</button>
+          <button class="outline">Manage Customers</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+      <small>
+        Sales Dashboard powered by Pico CSS • Last updated: <span id="last-updated">July 3, 2025 14:30</span>
+      </small>
+    </footer>
+
+    <!-- Settings Modal -->
+    <dialog id="settings-modal">
+      <article>
+        <header>
+          <button
+            aria-label="Close"
+            rel="prev"
+            data-target="settings-modal"
+            onclick="toggleModal(event)"
+          ></button>
+          <h3>Dashboard Settings</h3>
+        </header>
+        <form>
+          <label for="refresh-interval">
+            Auto-refresh interval (minutes)
+            <select id="refresh-interval" name="refresh-interval">
+              <option value="1">1 minute</option>
+              <option value="5" selected>5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="30">30 minutes</option>
+            </select>
+          </label>
+
+          <label for="currency">
+            Currency
+            <select id="currency" name="currency">
+              <option value="USD" selected>USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+            </select>
+          </label>
+
+          <fieldset>
+            <legend><strong>Notifications</strong></legend>
+            <label for="email-alerts">
+              <input type="checkbox" id="email-alerts" name="email-alerts" role="switch" checked>
+              Email alerts for large sales
+            </label>
+            <label for="goal-notifications">
+              <input type="checkbox" id="goal-notifications" name="goal-notifications" role="switch">
+              Goal achievement notifications
+            </label>
+          </fieldset>
+        </form>
+        <footer>
+          <button
+            role="button"
+            class="secondary"
+            data-target="settings-modal"
+            onclick="toggleModal(event)"
+          >
+            Cancel
+          </button>
+          <button
+            data-target="settings-modal"
+            onclick="saveSettings(event)"
+          >
+            Save Settings
+          </button>
+        </footer>
+      </article>
+    </dialog>
+
+    <script>
+      // Theme switcher functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeSwitchers = document.querySelectorAll('[data-theme-switcher]');
+        themeSwitchers.forEach(switcher => {
+          switcher.addEventListener('click', function(e) {
+            e.preventDefault();
+            const theme = this.getAttribute('data-theme-switcher');
+            if (theme === 'auto') {
+              document.documentElement.removeAttribute('data-theme');
+            } else {
+              document.documentElement.setAttribute('data-theme', theme);
+            }
+          });
+        });
+      });
+
+      // Modal functionality
+      function toggleModal(event) {
+        event.preventDefault();
+        const target = event.target.getAttribute('data-target');
+        const modal = document.getElementById(target);
+        if (modal) {
+          if (modal.open) {
+            modal.close();
+          } else {
+            modal.showModal();
+          }
+        }
+      }
+
+      // Dashboard functions
+      function refreshData() {
+        // Simulate data refresh
+        const metrics = ['total-revenue', 'total-sales', 'avg-order', 'conversion-rate'];
+        metrics.forEach(id => {
+          const element = document.getElementById(id);
+          element.style.opacity = '0.5';
+          setTimeout(() => {
+            element.style.opacity = '1';
+          }, 1000);
+        });
+
+        // Update last updated time
+        document.getElementById('last-updated').textContent = new Date().toLocaleString();
+      }
+
+      function exportReport() {
+        alert('Report export functionality would be implemented here');
+      }
+
+      function saveSettings(event) {
+        event.preventDefault();
+        // Save settings logic would go here
+        toggleModal(event);
+        alert('Settings saved successfully!');
+      }
+
+      // Initialize Charts
+      document.addEventListener('DOMContentLoaded', function() {
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+            datasets: [{
+              label: 'Revenue',
+              data: [65000, 78000, 82000, 75000, 90000, 95000, 84700],
+              borderColor: '#0066cc',
+              backgroundColor: 'rgba(0, 102, 204, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return '$' + (value / 1000) + 'K';
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        // Category Chart
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Software', 'Services', 'Hardware', 'Support'],
+            datasets: [{
+              data: [45, 25, 20, 10],
+              backgroundColor: [
+                '#0066cc',
+                '#28a745',
+                '#ffc107',
+                '#dc3545'
+              ]
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      });
+
+      // Auto-refresh functionality (every 5 minutes by default)
+      setInterval(function() {
+        const lastUpdated = document.getElementById('last-updated');
+        lastUpdated.textContent = new Date().toLocaleString();
+      }, 300000);
+    </script>
+  </body>
+</html>
