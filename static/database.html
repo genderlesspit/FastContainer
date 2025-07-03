@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Database Search</title>
+    <meta name="description" content="Internal database search system for PhazeBreak Coatings employees.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .search-container {
+        background: var(--pico-card-background-color);
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .database-tabs {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--pico-border-color);
+        overflow-x: auto;
+      }
+
+      .database-tab {
+        background: none;
+        border: none;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        color: var(--pico-muted-color);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      .database-tab.active {
+        color: var(--pico-primary);
+        border-bottom-color: var(--pico-primary);
+        background: var(--pico-primary-background);
+      }
+
+      .database-tab:hover {
+        color: var(--pico-color);
+        background: var(--pico-muted-border-color);
+      }
+
+      .result-card {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+        background: var(--pico-card-background-color);
+      }
+
+      .result-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--pico-primary);
+      }
+
+      .result-header {
+        display: flex;
+        justify-content: between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .result-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        color: var(--pico-color);
+      }
+
+      .result-subtitle {
+        color: var(--pico-muted-color);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .result-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: auto;
+      }
+
+      .result-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: var(--pico-muted-background-color);
+        border-radius: var(--pico-border-radius);
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .meta-label {
+        font-size: 0.75rem;
+        color: var(--pico-muted-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+      }
+
+      .meta-value {
+        font-weight: 500;
+        color: var(--pico-color);
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-active {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-qualified {
+        background: #cce5ff;
+        color: #004085;
+      }
+
+      .advanced-search {
+        display: none;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--pico-muted-border-color);
+      }
+
+      .advanced-search.show {
+        display: block;
+      }
+
+      .search-results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--pico-muted-border-color);
+      }
+
+      .results-count {
+        color: var(--pico-muted-color);
+        font-size: 0.9rem;
+      }
+
+      .export-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: var(--pico-muted-color);
+      }
+
+      .quick-filters {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .quick-filter {
+        padding: 0.25rem 0.75rem;
+        background: var(--pico-secondary);
+        color: var(--pico-secondary-inverse);
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .quick-filter:hover {
+        background: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+      }
+
+      .contact-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+      }
+
+      .priority-high {
+        border-left: 4px solid #dc3545;
+      }
+
+      .priority-medium {
+        border-left: 4px solid #ffc107;
+      }
+
+      .priority-low {
+        border-left: 4px solid #28a745;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>PhazeBreak Internal Database</h1>
+        <p>Search contacts, companies, leads, sales, and renewable energy installations</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#" onclick="showQuickStats()">📊 Quick Stats</a></li>
+          <li><a href="#" onclick="showRecentActivity()">🕒 Recent Activity</a></li>
+          <li><a href="#" onclick="exportData()">📥 Export Data</a></li>
+        </ul>
+        <ul>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Admin Tools</summary>
+              <ul>
+                <li><a href="#" onclick="bulkUpdate()">Bulk Update</a></li>
+                <li><a href="#" onclick="dataIntegrity()">Data Integrity Check</a></li>
+                <li><a href="#" onclick="backupDatabase()">Backup Database</a></li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <!-- Database Type Tabs -->
+      <div class="database-tabs">
+        <button class="database-tab active" data-type="contacts">👥 Contacts</button>
+        <button class="database-tab" data-type="companies">🏢 Companies</button>
+        <button class="database-tab" data-type="leads">🎯 Leads</button>
+        <button class="database-tab" data-type="sales">💰 Sales</button>
+        <button class="database-tab" data-type="wind-farms">💨 Wind Farms</button>
+        <button class="database-tab" data-type="solar-farms">☀️ Solar Farms</button>
+      </div>
+
+      <!-- Search Container -->
+      <section class="search-container">
+        <div class="grid">
+          <input type="search" id="main-search" placeholder="Search database..." aria-label="Search database">
+          <select id="search-field" aria-label="Search field">
+            <option value="all">All Fields</option>
+            <option value="name">Name</option>
+            <option value="email">Email</option>
+            <option value="company">Company</option>
+            <option value="location">Location</option>
+          </select>
+          <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <button class="outline secondary" onclick="toggleAdvancedSearch()">
+            Advanced Search Options
+          </button>
+          <button class="outline secondary" onclick="clearSearch()">
+            Clear All
+          </button>
+        </div>
+
+        <!-- Advanced Search -->
+        <div id="advanced-search" class="advanced-search">
+          <h4>Advanced Search Filters</h4>
+          <div class="grid">
+            <div>
+              <label for="date-from">Date From</label>
+              <input type="date" id="date-from" name="date-from">
+            </div>
+            <div>
+              <label for="date-to">Date To</label>
+              <input type="date" id="date-to" name="date-to">
+            </div>
+            <div>
+              <label for="status-filter">Status</label>
+              <select id="status-filter" name="status-filter">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+                <option value="qualified">Qualified</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <label for="region-filter">Region</label>
+              <select id="region-filter" name="region-filter">
+                <option value="">All Regions</option>
+                <option value="north-america">North America</option>
+                <option value="europe">Europe</option>
+                <option value="asia-pacific">Asia Pacific</option>
+                <option value="south-america">South America</option>
+              </select>
+            </div>
+            <div>
+              <label for="priority-filter">Priority</label>
+              <select id="priority-filter" name="priority-filter">
+                <option value="">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div>
+              <label for="value-min">Min Value ($)</label>
+              <input type="number" id="value-min" name="value-min" placeholder="0">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Filters -->
+      <section id="quick-filters-section">
+        <div class="quick-filters" id="quick-filters">
+          <!-- Dynamically populated based on selected tab -->
+        </div>
+      </section>
+
+      <!-- Search Results -->
+      <section id="search-results">
+        <div class="search-results-header">
+          <div class="results-count" id="results-count">
+            Showing 156 results
+          </div>
+          <div>
+            <select id="sort-results" aria-label="Sort results">
+              <option value="relevance">Sort by Relevance</option>
+              <option value="name">Name A-Z</option>
+              <option value="date-newest">Newest First</option>
+              <option value="date-oldest">Oldest First</option>
+              <option value="value-highest">Highest Value</option>
+            </select>
+            <button class="export-btn outline secondary" onclick="exportResults()">
+              📊 Export Results
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container">
+          <!-- Sample contact results -->
+          <div class="result-card" data-type="contacts">
+            <div class="result-header">
+              <div style="display: flex; align-items: center;">
+                <div class="contact-avatar">SM</div>
+                <div>
+                  <h3 class="result-title">Sarah Mitchell</h3>
+                  <p class="result-subtitle">Senior Procurement Manager • GreenTech Solar Solutions</p>
+                </div>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('contact', 'sarah-mitchell')">Edit</button>
+                <button class="secondary" onclick="viewDetails('contact', 'sarah-mitchell')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Email</span>
+                <span class="meta-value">sarah.mitchell@greentech-solar.com</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Phone</span>
+                <span class="meta-value">+1 (555) 234-5678</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Location</span>
+                <span class="meta-value">Phoenix, AZ</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Status</span>
+                <span class="status-badge status-active">Active</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Last Contact</span>
+                <span class="meta-value">2024-01-10</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Deal Value</span>
+                <span class="meta-value">$247,500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-card priority-high" data-type="companies">
+            <div class="result-header">
+              <div>
+                <h3 class="result-title">WindPower Industries LLC</h3>
+                <p class="result-subtitle">Tier 1 Wind Farm Developer • 2,500+ MW Portfolio</p>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('company', 'windpower-industries')">Edit</button>
+                <button class="secondary" onclick="viewDetails('company', 'windpower-industries')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Primary Contact</span>
+                <span class="meta-value">David Chen, VP Operations</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Industry</span>
+                <span class="meta-value">Wind Energy Development</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Location</span>
+                <span class="meta-value">Denver, CO</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Annual Revenue</span>
+                <span class="meta-value">$850M</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Relationship</span>
+                <span class="status-badge status-active">Strategic Partner</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Total Contract Value</span>
+                <span class="meta-value">$1,250,000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-card priority-medium" data-type="leads">
+            <div class="result-header">
+              <div>
+                <h3 class="result-title">Desert Sun Solar Project</h3>
+                <p class="result-subtitle">250 MW Solar Installation • Nevada Energy Corp</p>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('lead', 'desert-sun-solar')">Edit</button>
+                <button class="secondary" onclick="viewDetails('lead', 'desert-sun-solar')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Lead Source</span>
+                <span class="meta-value">Trade Show - RE Expo 2024</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Stage</span>
+                <span class="status-badge status-qualified">Qualified</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Probability</span>
+                <span class="meta-value">75%</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Expected Value</span>
+                <span class="meta-value">$485,000</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Next Action</span>
+                <span class="meta-value">Technical Presentation - Jan 25</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Assigned Rep</span>
+                <span class="meta-value">Maria Rodriguez</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-card" data-type="sales">
+            <div class="result-header">
+              <div>
+                <h3 class="result-title">Texas Wind Coating Contract</h3>
+                <p class="result-subtitle">PB-2000 Series Application • Lone Star Wind Farm</p>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('sale', 'texas-wind-coating')">Edit</button>
+                <button class="secondary" onclick="viewDetails('sale', 'texas-wind-coating')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Contract Value</span>
+                <span class="meta-value">$750,000</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Product</span>
+                <span class="meta-value">PB-2000 Thermal Barrier</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Close Date</span>
+                <span class="meta-value">2023-12-15</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Status</span>
+                <span class="status-badge status-active">In Progress</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Sales Rep</span>
+                <span class="meta-value">James Wilson</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Completion</span>
+                <span class="meta-value">65%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-card" data-type="wind-farms">
+            <div class="result-header">
+              <div>
+                <h3 class="result-title">Prairie Wind Energy Complex</h3>
+                <p class="result-subtitle">300 MW Capacity • 150 Turbines • Kansas</p>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('wind-farm', 'prairie-wind-complex')">Edit</button>
+                <button class="secondary" onclick="viewDetails('wind-farm', 'prairie-wind-complex')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Operator</span>
+                <span class="meta-value">Great Plains Energy</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Installation Date</span>
+                <span class="meta-value">2022-08-15</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Turbine Model</span>
+                <span class="meta-value">Vestas V150-4.2</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Coating Applied</span>
+                <span class="meta-value">PB-1500 Series</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Contract Value</span>
+                <span class="meta-value">$425,000</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Next Maintenance</span>
+                <span class="meta-value">2024-06-01</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-card" data-type="solar-farms">
+            <div class="result-header">
+              <div>
+                <h3 class="result-title">Mojave Solar Station</h3>
+                <p class="result-subtitle">280 MW Capacity • 1.2M Panels • California</p>
+              </div>
+              <div class="result-actions">
+                <button class="outline" onclick="editRecord('solar-farm', 'mojave-solar-station')">Edit</button>
+                <button class="secondary" onclick="viewDetails('solar-farm', 'mojave-solar-station')">View</button>
+              </div>
+            </div>
+            <div class="result-meta">
+              <div class="meta-item">
+                <span class="meta-label">Operator</span>
+                <span class="meta-value">California Solar Energy</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Commercial Operation</span>
+                <span class="meta-value">2023-03-20</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Panel Technology</span>
+                <span class="meta-value">Monocrystalline Silicon</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Coating Solution</span>
+                <span class="meta-value">PB-2000 Thermal Protection</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Project Value</span>
+                <span class="meta-value">$680,000</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Performance Boost</span>
+                <span class="meta-value">+8.5% Efficiency</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+      <small>
+        PhazeBreak Coatings Internal Database System •
+        Last Updated: <span id="last-updated">January 15, 2024 14:32 UTC</span> •
+        <a href="#" onclick="showSystemStatus()">System Status</a> •
+        <a href="#" onclick="showHelp()">Help & Documentation</a>
+      </small>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Database state management
+      let currentDatabaseType = 'contacts';
+      let searchResults = [];
+      let currentFilters = {};
+
+      // Theme switcher functionality
+      const themeSwitcher = {
+        init() {
+          document.querySelectorAll('[data-theme-switcher]').forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              const theme = e.target.getAttribute('data-theme-switcher');
+              this.setTheme(theme);
+            });
+          });
+        },
+
+        setTheme(theme) {
+          if (theme === 'auto') {
+            document.documentElement.removeAttribute('data-theme');
+          } else {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+          localStorage.setItem('theme', theme);
+        }
+      };
+
+      // Tab functionality
+      function initializeTabs() {
+        const tabs = document.querySelectorAll('.database-tab');
+        tabs.forEach(tab => {
+          tab.addEventListener('click', (e) => {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            e.target.classList.add('active');
+
+            currentDatabaseType = e.target.getAttribute('data-type');
+            updateQuickFilters();
+            updateResultsDisplay();
+          });
+        });
+      }
+
+      // Quick filters based on database type
+      function updateQuickFilters() {
+        const filtersContainer = document.getElementById('quick-filters');
+        const filterSets = {
+          contacts: ['VIP Contacts', 'Recent Activity', 'High Value', 'Needs Follow-up'],
+          companies: ['Strategic Partners', 'Fortune 500', 'International', 'New Accounts'],
+          leads: ['Hot Leads', 'Qualified', 'Pending Proposal', 'Follow-up Required'],
+          sales: ['Closed Won', 'In Progress', 'At Risk', 'Q1 Pipeline'],
+          'wind-farms': ['Active Projects', 'Under Construction', 'Maintenance Due', 'High Capacity'],
+          'solar-farms': ['Utility Scale', 'Commercial', 'Performance Leaders', 'New Installations']
+        };
+
+        const filters = filterSets[currentDatabaseType] || [];
+        filtersContainer.innerHTML = filters.map(filter =>
+          `<span class="quick-filter" onclick="applyQuickFilter('${filter}')">${filter}</span>`
+        ).join('');
+      }
+
+      // Advanced search toggle
+      function toggleAdvancedSearch() {
+        const advancedSearch = document.getElementById('advanced-search');
+        advancedSearch.classList.toggle('show');
+      }
+
+      // Search functionality
+      function performSearch() {
+        const searchTerm = document.getElementById('main-search').value;
+        const searchField = document.getElementById('search-field').value;
+
+        console.log(`Searching for: ${searchTerm} in field: ${searchField} for type: ${currentDatabaseType}`);
+
+        // Simulate search delay
+        document.getElementById('results-count').textContent = 'Searching...';
+
+        setTimeout(() => {
+          // In real implementation, this would make API call
+          updateResultsCount();
+          filterResultsByType();
+        }, 500);
+      }
+
+      function clearSearch() {
+        document.getElementById('main-search').value = '';
+        document.getElementById('search-field').selectedIndex = 0;
+        document.getElementById('advanced-search').classList.remove('show');
+
+        // Clear advanced search fields
+        const advancedInputs = document.querySelectorAll('#advanced-search input, #advanced-search select');
+        advancedInputs.forEach(input => {
+          if (input.type === 'checkbox') {
+            input.checked = false;
+          } else {
+            input.value = '';
+          }
+        });
+
+        updateResultsDisplay();
+      }
+
+      // Results filtering and display
+      function filterResultsByType() {
+        const resultCards = document.querySelectorAll('.result-card');
+        let visibleCount = 0;
+
+        resultCards.forEach(card => {
+          const cardType = card.getAttribute('data-type');
+          if (currentDatabaseType === 'all' || cardType === currentDatabaseType) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        updateResultsCount(visibleCount);
+      }
+
+      function updateResultsDisplay() {
+        filterResultsByType();
+      }
+
+      function updateResultsCount(count) {
+        const countElement = document.getElementById('results-count');
+        if (count !== undefined) {
+          countElement.textContent = `Showing ${count} results`;
+        } else {
+          // Count visible cards
+          const visibleCards = document.querySelectorAll('.result-card[style*="block"], .result-card:not([style*="none"])');
+          countElement.textContent = `Showing ${visibleCards.length} results`;
+        }
+      }
+
+      // Quick filter application
+      function applyQuickFilter(filterName) {
+        console.log(`Applying quick filter: ${filterName}`);
+        // In real implementation, this would apply the filter to the search
+        alert(`Applied filter: ${filterName}`);
+      }
+
+      // Record actions
+      function editRecord(type, id) {
+        console.log(`Editing ${type} record: ${id}`);
+        alert(`Opening edit dialog for ${type}: ${id}`);
+      }
+
+      function viewDetails(type, id) {
+        console.log(`Viewing ${type} details: ${id}`);
+        alert(`Opening detailed view for ${type}: ${id}`);
+      }
+
+      // Export and admin functions
+      function exportResults() {
+        console.log('Exporting search results...');
+        alert('Exporting current search results to CSV...');
+        // In real implementation, this would generate and download a CSV file
+      }
+
+      function exportData() {
+        console.log('Exporting database data...');
+        alert('Opening export wizard for bulk data export...');
+      }
+
+      // Admin functions
+      function bulkUpdate() {
+        console.log('Opening bulk update tool...');
+        alert('Opening bulk update interface for selected records...');
+      }
+
+      function dataIntegrity() {
+        console.log('Running data integrity check...');
+        alert('Running comprehensive data integrity check...');
+      }
+
+      function backupDatabase() {
+        console.log('Initiating database backup...');
+        alert('Starting automated database backup process...');
+      }
+
+      // Quick stats and activity
+      function showQuickStats() {
+        const stats = `
+Database Quick Stats:
+• Total Contacts: 2,847
+• Active Companies: 456
+• Open Leads: 189
+• YTD Sales: $12.4M
+• Wind Farm Projects: 78
+• Solar Farm Projects: 92
+• Data Last Updated: 15 minutes ago
+        `;
+        alert(stats);
+      }
+
+      function showRecentActivity() {
+        const activity = `
+Recent Database Activity:
+• 3 new contacts added today
+• 5 leads updated in last hour
+• 2 sales records modified
+• 1 wind farm project completed
+• System sync completed at 14:32 UTC
+        `;
+        alert(activity);
+      }
+
+      function showSystemStatus() {
+        const status = `
+System Status:
+• Database: Online ✅
+• Search Index: Updated ✅
+• Backup Status: Last backup 2 hours ago ✅
+• API Response Time: 120ms ✅
+• Active Users: 23
+        `;
+        alert(status);
+      }
+
+      function showHelp() {
+        console.log('Opening help documentation...');
+        alert('Opening internal database help documentation...');
+      }
+
+      // Sort functionality
+      function initializeSorting() {
+        const sortSelect = document.getElementById('sort-results');
+        sortSelect.addEventListener('change', (e) => {
+          const sortBy = e.target.value;
+          sortResults(sortBy);
+        });
+      }
+
+      function sortResults(sortBy) {
+        const container = document.getElementById('results-container');
+        const cards = Array.from(container.querySelectorAll('.result-card:not([style*="none"])'));
+
+        cards.sort((a, b) => {
+          const titleA = a.querySelector('.result-title').textContent;
+          const titleB = b.querySelector('.result-title').textContent;
+
+          switch(sortBy) {
+            case 'name':
+              return titleA.localeCompare(titleB);
+            case 'date-newest':
+              // In real implementation, would sort by actual dates
+              return Math.random() - 0.5; // Random for demo
+            case 'date-oldest':
+              return Math.random() - 0.5; // Random for demo
+            case 'value-highest':
+              // Extract and compare values
+              const valueA = extractValue(a);
+              const valueB = extractValue(b);
+              return valueB - valueA;
+            default:
+              return 0; // Keep original order for relevance
+          }
+        });
+
+        // Reorder DOM elements
+        cards.forEach(card => container.appendChild(card));
+      }
+
+      function extractValue(card) {
+        const valueElements = card.querySelectorAll('.meta-value');
+        for (let element of valueElements) {
+          const text = element.textContent;
+          if (text.includes(')) {
+            return parseFloat(text.replace(/[$,]/g, '')) || 0;
+          }
+        }
+        return 0;
+      }
+
+      // Search suggestions and autocomplete
+      function initializeSearchSuggestions() {
+        const searchInput = document.getElementById('main-search');
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value;
+          if (query.length > 2) {
+            // In real implementation, this would show autocomplete suggestions
+            console.log(`Search suggestions for: ${query}`);
+          }
+        });
+      }
+
+      // Keyboard shortcuts
+      function initializeKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          // Ctrl/Cmd + K for quick search focus
+          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('main-search').focus();
+          }
+
+          // Ctrl/Cmd + E for export
+          if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            exportResults();
+          }
+
+          // Escape to clear search
+          if (e.key === 'Escape') {
+            const searchInput = document.getElementById('main-search');
+            if (searchInput === document.activeElement) {
+              searchInput.blur();
+            } else {
+              clearSearch();
+            }
+          }
+        });
+      }
+
+      // Real-time updates simulation
+      function simulateRealTimeUpdates() {
+        setInterval(() => {
+          // Update last updated timestamp
+          const now = new Date();
+          const timeString = now.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+          });
+          document.getElementById('last-updated').textContent = timeString;
+        }, 60000); // Update every minute
+      }
+
+      // Advanced search form handling
+      function initializeAdvancedSearch() {
+        const advancedForm = document.getElementById('advanced-search');
+        const inputs = advancedForm.querySelectorAll('input, select');
+
+        inputs.forEach(input => {
+          input.addEventListener('change', () => {
+            // Auto-apply filters when advanced search values change
+            if (input.value) {
+              console.log(`Advanced filter applied: ${input.name} = ${input.value}`);
+              performSearch();
+            }
+          });
+        });
+      }
+
+      // Initialize everything when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        themeSwitcher.init();
+        initializeTabs();
+        initializeSorting();
+        initializeSearchSuggestions();
+        initializeKeyboardShortcuts();
+        initializeAdvancedSearch();
+        simulateRealTimeUpdates();
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme && savedTheme !== 'auto') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Initialize with default view
+        updateQuickFilters();
+        updateResultsDisplay();
+
+        // Show helpful hints
+        console.log('Keyboard shortcuts:');
+        console.log('Ctrl/Cmd + K: Focus search');
+        console.log('Ctrl/Cmd + E: Export results');
+        console.log('Escape: Clear search');
+      });
+    </script>
+  </body>
+</html>

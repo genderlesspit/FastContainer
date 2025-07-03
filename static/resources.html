@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Resources</title>
+    <meta name="description" content="Technical resources, datasheets, and sales materials for PhazeBreak Coatings.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .resource-card {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: box-shadow 0.2s ease;
+      }
+
+      .resource-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .resource-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+
+      .download-btn {
+        margin-top: 0.5rem;
+      }
+
+      .category-header {
+        border-bottom: 2px solid var(--pico-primary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .search-container {
+        margin-bottom: 2rem;
+      }
+
+      .tag {
+        display: inline-block;
+        background: var(--pico-secondary);
+        color: var(--pico-secondary-inverse);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        margin: 0.25rem 0.25rem 0.25rem 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>PhazeBreak Coatings</h1>
+        <p>Technical Resources & Documentation Center</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#sales-resources">Sales Resources</a></li>
+          <li><a href="#technical-datasheets">Technical Datasheets</a></li>
+          <li><a href="#reference-graphics">Reference Graphics</a></li>
+        </ul>
+        <ul>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <!-- Search and Filter -->
+      <section class="search-container">
+        <div class="grid">
+          <input type="search" id="resource-search" placeholder="Search resources..." aria-label="Search resources">
+          <select id="category-filter" aria-label="Filter by category">
+            <option value="">All Categories</option>
+            <option value="sales">Sales Resources</option>
+            <option value="technical">Technical Datasheets</option>
+            <option value="graphics">Reference Graphics</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Sales Resources -->
+      <section id="sales-resources">
+        <h2 class="category-header">Sales Resources</h2>
+        <p>Essential materials to support your sales efforts and customer engagement.</p>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">📊</span>
+              Product Brochure 2024
+            </h4>
+            <p>Comprehensive overview of all PhazeBreak coating solutions with performance specifications and application guidelines.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">8.2 MB</div>
+            <div class="tag">Updated Dec 2023</div>
+            <button class="download-btn outline" onclick="downloadResource('product-brochure-2024.pdf')">Download PDF</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">💰</span>
+              Pricing Guide Q1 2024
+            </h4>
+            <p>Current pricing structure for all coating products including volume discounts and distributor rates.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">1.5 MB</div>
+            <div class="tag">Confidential</div>
+            <button class="download-btn outline" onclick="downloadResource('pricing-guide-q1-2024.pdf')">Download PDF</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🎯</span>
+              Market Comparison Sheet
+            </h4>
+            <p>Competitive analysis comparing PhazeBreak solutions against industry alternatives.</p>
+            <div class="tag">Excel</div>
+            <div class="tag">2.1 MB</div>
+            <button class="download-btn outline" onclick="downloadResource('market-comparison.xlsx')">Download Excel</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">📋</span>
+              ROI Calculator Template
+            </h4>
+            <p>Interactive spreadsheet to demonstrate cost savings and return on investment for customers.</p>
+            <div class="tag">Excel</div>
+            <div class="tag">890 KB</div>
+            <button class="download-btn outline" onclick="downloadResource('roi-calculator.xlsx')">Download Excel</button>
+          </div>
+        </div>
+
+        <div class="resource-card">
+          <h4>
+            <span class="resource-icon">🎥</span>
+            Sales Presentation Template
+          </h4>
+          <p>PowerPoint template with customizable slides for customer presentations including case studies and technical benefits.</p>
+          <div class="tag">PowerPoint</div>
+          <div class="tag">15.3 MB</div>
+          <div class="tag">Editable</div>
+          <button class="download-btn outline" onclick="downloadResource('sales-presentation-template.pptx')">Download PowerPoint</button>
+        </div>
+      </section>
+
+      <!-- Technical Datasheets -->
+      <section id="technical-datasheets">
+        <h2 class="category-header">Technical Datasheets</h2>
+        <p>Detailed technical specifications and performance data for all PhazeBreak coating products.</p>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🔬</span>
+              NEINICE
+            </h4>
+            <p>High-performance nano-tech icephobic coating for extreme conditions in cold environments.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">3.2 MB</div>
+            <div class="tag">Rev 2.1</div>
+            <button class="download-btn outline" onclick="downloadResource('pb-2000-datasheet.pdf')">Download PDF</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🔬</span>
+              NEUSHIELD
+            </h4>
+            <p>Hydrophilic self-cleaning and impact resistant coataing for solar panel performance.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">2.8 MB</div>
+            <div class="tag">Rev 1.9</div>
+            <button class="download-btn outline" onclick="downloadResource('pb-1500-datasheet.pdf')">Download PDF</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🔬</span>
+              Surface Slip
+            </h4>
+            <p>Legacy wind product providing the benefits of NeuShield.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">2.4 MB</div>
+            <div class="tag">Rev 1.5</div>
+            <button class="download-btn outline" onclick="downloadResource('pb-1000-datasheet.pdf')">Download PDF</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">⚗️</span>
+              Chemical Resistance Guide
+            </h4>
+            <p>Comprehensive guide to chemical compatibility across all PhazeBreak coating formulations.</p>
+            <div class="tag">PDF</div>
+            <div class="tag">5.1 MB</div>
+            <div class="tag">Updated Jan 2024</div>
+            <button class="download-btn outline" onclick="downloadResource('chemical-resistance-guide.pdf')">Download PDF</button>
+          </div>
+        </div>
+
+        <div class="resource-card">
+          <h4>
+            <span class="resource-icon">📏</span>
+            Application Guidelines Manual
+          </h4>
+          <p>Detailed instructions for proper surface preparation, application techniques, and quality control procedures.</p>
+          <div class="tag">PDF</div>
+          <div class="tag">12.7 MB</div>
+          <div class="tag">Version 3.0</div>
+          <button class="download-btn outline" onclick="downloadResource('application-guidelines.pdf')">Download PDF</button>
+        </div>
+      </section>
+
+      <!-- Reference Graphics -->
+      <section id="reference-graphics">
+        <h2 class="category-header">Reference Graphics</h2>
+        <p>Visual assets including logos, technical diagrams, and marketing materials.</p>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🎨</span>
+              Brand Asset Package
+            </h4>
+            <p>Complete brand guidelines with logos, color palettes, and typography specifications in multiple formats.</p>
+            <div class="tag">ZIP</div>
+            <div class="tag">25.6 MB</div>
+            <div class="tag">Vector + Raster</div>
+            <button class="download-btn outline" onclick="downloadResource('brand-assets.zip')">Download ZIP</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">📐</span>
+              Technical Diagrams
+            </h4>
+            <p>CAD drawings and technical illustrations showing coating application methods and cross-sections.</p>
+            <div class="tag">ZIP</div>
+            <div class="tag">18.3 MB</div>
+            <div class="tag">DWG + PDF</div>
+            <button class="download-btn outline" onclick="downloadResource('technical-diagrams.zip')">Download ZIP</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">📊</span>
+              Performance Charts
+            </h4>
+            <p>High-resolution charts showing thermal performance, durability testing results, and comparative data.</p>
+            <div class="tag">PNG</div>
+            <div class="tag">8.9 MB</div>
+            <div class="tag">300 DPI</div>
+            <button class="download-btn outline" onclick="downloadResource('performance-charts.zip')">Download ZIP</button>
+          </div>
+
+          <div class="resource-card">
+            <h4>
+              <span class="resource-icon">🏭</span>
+              Application Photos
+            </h4>
+            <p>High-quality photographs showing real-world applications across various industries and environments.</p>
+            <div class="tag">ZIP</div>
+            <div class="tag">42.1 MB</div>
+            <div class="tag">High Resolution</div>
+            <button class="download-btn outline" onclick="downloadResource('application-photos.zip')">Download ZIP</button>
+          </div>
+        </div>
+
+        <div class="resource-card">
+          <h4>
+            <span class="resource-icon">🎬</span>
+            Product Videos
+          </h4>
+          <p>Collection of product demonstration videos, application tutorials, and customer testimonials.</p>
+          <div class="tag">Video Links</div>
+          <div class="tag">Streaming</div>
+          <div class="tag">HD Quality</div>
+          <button class="download-btn outline" onclick="openVideoGallery()">View Gallery</button>
+        </div>
+      </section>
+
+      <!-- Quick Access Tools -->
+      <section id="quick-tools">
+        <h2>Quick Access Tools</h2>
+        <div class="grid">
+          <article>
+            <header>
+              <h4>Coverage Calculator</h4>
+            </header>
+            <p>Calculate material requirements for your specific project dimensions.</p>
+            <footer>
+              <button class="secondary" onclick="openCalculator('coverage')">Launch Calculator</button>
+            </footer>
+          </article>
+
+          <article>
+            <header>
+              <h4>Product Selector</h4>
+            </header>
+            <p>Interactive tool to find the optimal coating solution for your application.</p>
+            <footer>
+              <button class="secondary" onclick="openCalculator('selector')">Launch Selector</button>
+            </footer>
+          </article>
+
+          <article>
+            <header>
+              <h4>Technical Support</h4>
+            </header>
+            <p>Direct access to our technical team for application assistance and troubleshooting.</p>
+            <footer>
+              <button class="secondary" onclick="contactSupport()">Contact Support</button>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <!-- Resource Request Form -->
+      <section id="request-form">
+        <h2>Request Additional Resources</h2>
+        <p>Can't find what you're looking for? Request specific technical documentation or custom materials.</p>
+
+        <form>
+          <div class="grid">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+          </div>
+
+          <input type="text" name="company" placeholder="Company Name">
+
+          <select name="resource-type" required>
+            <option value="">Select Resource Type</option>
+            <option value="technical">Technical Documentation</option>
+            <option value="sales">Sales Materials</option>
+            <option value="custom">Custom Graphics</option>
+            <option value="training">Training Materials</option>
+            <option value="other">Other</option>
+          </select>
+
+          <textarea name="description" placeholder="Describe the resources you need..." rows="4" required></textarea>
+
+          <fieldset>
+            <label for="urgent">
+              <input type="checkbox" id="urgent" name="urgent" role="switch">
+              This is an urgent request
+            </label>
+          </fieldset>
+
+          <button type="submit">Submit Request</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+      <div class="grid">
+        <div>
+          <h5>PhazeBreak Coatings</h5>
+          <p>Nanotech coating solutions for industrial applications.</p>
+        </div>
+        <div>
+          <h6>Contact Information</h6>
+          <p>
+            Technical Support: <a href="tel:+1-800-PHAZEBRK">1-800-PHAZEBRK</a><br>
+            Email: <a href="mailto:resources@phazebreak.com">resources@phazebreak.com</a>
+          </p>
+        </div>
+      </div>
+      <hr>
+      <small>
+        © 2024 PhazeBreak Coatings. All rights reserved. •
+        <a href="#privacy">Privacy Policy</a> •
+        <a href="#terms">Terms of Use</a>
+      </small>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Theme switcher functionality
+      const themeSwitcher = {
+        init() {
+          document.querySelectorAll('[data-theme-switcher]').forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              const theme = e.target.getAttribute('data-theme-switcher');
+              this.setTheme(theme);
+            });
+          });
+        },
+
+        setTheme(theme) {
+          if (theme === 'auto') {
+            document.documentElement.removeAttribute('data-theme');
+          } else {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+          localStorage.setItem('theme', theme);
+        }
+      };
+
+      // Resource management functions
+      function downloadResource(filename) {
+        // In a real implementation, this would trigger an actual download
+        alert(`Downloading: ${filename}`);
+        console.log(`Download initiated for: ${filename}`);
+      }
+
+      function openVideoGallery() {
+        alert('Opening video gallery in new window...');
+        // window.open('/video-gallery', '_blank');
+      }
+
+      function openCalculator(type) {
+        alert(`Opening ${type} calculator...`);
+        // window.open(`/tools/${type}-calculator`, '_blank');
+      }
+
+      function contactSupport() {
+        alert('Redirecting to technical support contact form...');
+        // window.open('/support/contact', '_blank');
+      }
+
+      // Search and filter functionality
+      function initializeFilters() {
+        const searchInput = document.getElementById('resource-search');
+        const categoryFilter = document.getElementById('category-filter');
+
+        searchInput.addEventListener('input', filterResources);
+        categoryFilter.addEventListener('change', filterResources);
+      }
+
+      function filterResources() {
+        const searchTerm = document.getElementById('resource-search').value.toLowerCase();
+        const selectedCategory = document.getElementById('category-filter').value;
+        const resourceCards = document.querySelectorAll('.resource-card');
+
+        resourceCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          const matchesSearch = text.includes(searchTerm);
+          const matchesCategory = !selectedCategory || card.closest('section').id.includes(selectedCategory);
+
+          if (matchesSearch && matchesCategory) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // Form submission
+      document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Resource request submitted successfully! We will contact you within 24 hours.');
+        this.reset();
+      });
+
+      // Initialize everything when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        themeSwitcher.init();
+        initializeFilters();
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme && savedTheme !== 'auto') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+      });
+    </script>
+  </body>
+</html>

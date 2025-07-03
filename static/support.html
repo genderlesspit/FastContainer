@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Website Support & Feedback • PhazeBreak Coatings</title>
+    <meta name="description" content="Report website issues, submit feedback, and access troubleshooting resources for PhazeBreak Coatings.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .support-card {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background: var(--pico-card-background-color);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .support-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .issue-form {
+        background: var(--pico-card-background-color);
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .severity-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .severity-critical {
+        background: #dc3545;
+        color: white;
+      }
+
+      .severity-high {
+        background: #fd7e14;
+        color: white;
+      }
+
+      .severity-medium {
+        background: #ffc107;
+        color: black;
+      }
+
+      .severity-low {
+        background: #28a745;
+        color: white;
+      }
+
+      .severity-enhancement {
+        background: #6f42c1;
+        color: white;
+      }
+
+      .issue-type-icon {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+
+      .troubleshooting-section {
+        background: var(--pico-muted-background-color);
+        padding: 1.5rem;
+        border-radius: var(--pico-border-radius);
+        margin-bottom: 2rem;
+      }
+
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .status-operational {
+        background: #28a745;
+      }
+
+      .status-degraded {
+        background: #ffc107;
+      }
+
+      .status-outage {
+        background: #dc3545;
+      }
+
+      .github-integration {
+        background: #f6f8fa;
+        border: 1px solid #d0d7de;
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .github-logo {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--pico-muted-border-color);
+      }
+
+      .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .browser-info {
+        background: var(--pico-muted-background-color);
+        padding: 1rem;
+        border-radius: var(--pico-border-radius);
+        font-family: monospace;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .screenshot-upload {
+        border: 2px dashed var(--pico-muted-border-color);
+        padding: 2rem;
+        text-align: center;
+        border-radius: var(--pico-border-radius);
+        margin-top: 0.5rem;
+      }
+
+      .recent-issues {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+      }
+
+      .issue-item {
+        border-bottom: 1px solid var(--pico-muted-border-color);
+        padding: 0.75rem 0;
+      }
+
+      .issue-item:last-child {
+        border-bottom: none;
+      }
+
+      .issue-title {
+        margin: 0 0 0.25rem 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .issue-meta {
+        font-size: 0.75rem;
+        color: var(--pico-muted-color);
+      }
+
+      .tab-navigation {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--pico-border-color);
+      }
+
+      .tab-button {
+        background: none;
+        border: none;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        color: var(--pico-muted-color);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      .tab-button.active {
+        color: var(--pico-primary);
+        border-bottom-color: var(--pico-primary);
+        background: var(--pico-primary-background);
+      }
+
+      .faq-item {
+        margin-bottom: 1rem;
+      }
+
+      .priority-high {
+        border-left: 4px solid #dc3545;
+      }
+
+      .priority-medium {
+        border-left: 4px solid #ffc107;
+      }
+
+      .priority-low {
+        border-left: 4px solid #28a745;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>PhazeBreak Coatings</h1>
+        <p>Website Support & Feedback Center</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#report-issue">Report Issue</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#system-status">System Status</a></li>
+        </ul>
+        <ul>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Quick Help</summary>
+              <ul>
+                <li><a href="#common-issues">Common Issues</a></li>
+                <li><a href="#browser-support">Browser Support</a></li>
+                <li><a href="#contact-it">Contact IT</a></li>
+                <li><a href="#user-guide">User Guide</a></li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-button active">🐛 Report Issue</button>
+        <button class="tab-button">🔧 Troubleshooting</button>
+        <button class="tab-button">📊 System Status</button>
+        <button class="tab-button">❓ FAQ</button>
+      </div>
+
+      <!-- System Status Overview -->
+      <section class="troubleshooting-section">
+        <h3>Current System Status</h3>
+        <div class="grid">
+          <div class="status-indicator">
+            <div class="status-dot status-operational"></div>
+            <div>
+              <strong>Website</strong><br>
+              <small>All systems operational</small>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot status-operational"></div>
+            <div>
+              <strong>Database</strong><br>
+              <small>All systems operational</small>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot status-degraded"></div>
+            <div>
+              <strong>RSS Feeds</strong><br>
+              <small>Experiencing delays</small>
+            </div>
+          </div>
+          <div class="status-indicator">
+            <div class="status-dot status-operational"></div>
+            <div>
+              <strong>File Downloads</strong><br>
+              <small>All systems operational</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Report Issue Section -->
+      <section id="report-issue">
+        <h2>Report Website Issue or Submit Feedback</h2>
+
+        <div class="issue-form">
+          <form>
+            <!-- Issue Classification -->
+            <div class="form-section">
+              <h3>Issue Classification</h3>
+
+              <label for="issue-type">Issue Type</label>
+              <select id="issue-type" name="issue-type" required>
+                <option value="">Select issue type...</option>
+                <option value="bug">🐛 Bug Report</option>
+                <option value="feature">✨ Feature Request</option>
+                <option value="performance">⚡ Performance Issue</option>
+                <option value="ui-ux">🎨 UI/UX Problem</option>
+                <option value="accessibility">♿ Accessibility Issue</option>
+                <option value="mobile">📱 Mobile Issue</option>
+                <option value="data">📊 Data Problem</option>
+                <option value="security">🔒 Security Concern</option>
+                <option value="other">❓ Other</option>
+              </select>
+
+              <label for="severity">Severity Level</label>
+              <select id="severity" name="severity" required>
+                <option value="">Select severity...</option>
+                <option value="critical">🔴 Critical - System down/unusable</option>
+                <option value="high">🟠 High - Major functionality broken</option>
+                <option value="medium">🟡 Medium - Minor functionality affected</option>
+                <option value="low">🟢 Low - Cosmetic or enhancement</option>
+              </select>
+
+              <label for="page-url">Page/Section Affected</label>
+              <input type="url" id="page-url" name="page-url" placeholder="https://phazebreak.com/page-name" aria-label="Page URL">
+              <small>Paste the URL where you encountered the issue</small>
+            </div>
+
+            <!-- Issue Details -->
+            <div class="form-section">
+              <h3>Issue Details</h3>
+
+              <label for="issue-title">Issue Summary</label>
+              <input type="text" id="issue-title" name="issue-title" placeholder="Brief description of the issue" required maxlength="100">
+              <small>Keep it concise - this will be the GitHub issue title</small>
+
+              <label for="issue-description">Detailed Description</label>
+              <textarea id="issue-description" name="issue-description" rows="6" placeholder="Describe the issue in detail. Include what you were trying to do, what you expected to happen, and what actually happened." required></textarea>
+
+              <label for="steps-to-reproduce">Steps to Reproduce</label>
+              <textarea id="steps-to-reproduce" name="steps-to-reproduce" rows="4" placeholder="1. Go to...&#10;2. Click on...&#10;3. Scroll to...&#10;4. See error"></textarea>
+
+              <label for="expected-behavior">Expected Behavior</label>
+              <textarea id="expected-behavior" name="expected-behavior" rows="3" placeholder="What should have happened?"></textarea>
+
+              <label for="actual-behavior">Actual Behavior</label>
+              <textarea id="actual-behavior" name="actual-behavior" rows="3" placeholder="What actually happened?"></textarea>
+            </div>
+
+            <!-- User Information -->
+            <div class="form-section">
+              <h3>Reporter Information</h3>
+
+              <div class="grid">
+                <div>
+                  <label for="reporter-name">Your Name</label>
+                  <input type="text" id="reporter-name" name="reporter-name" required>
+                </div>
+                <div>
+                  <label for="reporter-email">Email Address</label>
+                  <input type="email" id="reporter-email" name="reporter-email" required>
+                </div>
+              </div>
+
+              <label for="department">Department/Role</label>
+              <select id="department" name="department">
+                <option value="">Select department...</option>
+                <option value="sales">Sales</option>
+                <option value="marketing">Marketing</option>
+                <option value="engineering">Engineering</option>
+                <option value="operations">Operations</option>
+                <option value="management">Management</option>
+                <option value="customer-service">Customer Service</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Technical Environment -->
+            <div class="form-section">
+              <h3>Technical Environment</h3>
+
+              <div class="grid">
+                <div>
+                  <label for="browser">Browser</label>
+                  <select id="browser" name="browser">
+                    <option value="">Select browser...</option>
+                    <option value="chrome">Chrome</option>
+                    <option value="firefox">Firefox</option>
+                    <option value="safari">Safari</option>
+                    <option value="edge">Microsoft Edge</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="browser-version">Browser Version</label>
+                  <input type="text" id="browser-version" name="browser-version" placeholder="e.g., 120.0.6099.109">
+                </div>
+              </div>
+
+              <div class="grid">
+                <div>
+                  <label for="operating-system">Operating System</label>
+                  <select id="operating-system" name="operating-system">
+                    <option value="">Select OS...</option>
+                    <option value="windows">Windows</option>
+                    <option value="macos">macOS</option>
+                    <option value="linux">Linux</option>
+                    <option value="ios">iOS</option>
+                    <option value="android">Android</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="screen-resolution">Screen Resolution</label>
+                  <input type="text" id="screen-resolution" name="screen-resolution" placeholder="e.g., 1920x1080">
+                </div>
+              </div>
+
+              <fieldset>
+                <legend>Device Type</legend>
+                <label for="device-desktop">
+                  <input type="radio" id="device-desktop" name="device-type" value="desktop">
+                  Desktop/Laptop
+                </label>
+                <label for="device-tablet">
+                  <input type="radio" id="device-tablet" name="device-type" value="tablet">
+                  Tablet
+                </label>
+                <label for="device-mobile">
+                  <input type="radio" id="device-mobile" name="device-type" value="mobile">
+                  Mobile Phone
+                </label>
+              </fieldset>
+
+              <button type="button" class="outline secondary" onclick="detectBrowserInfo()">
+                Auto-Detect Browser Information
+              </button>
+
+              <div class="browser-info" id="browser-info" style="display: none;">
+                <strong>Detected Information:</strong><br>
+                <span id="detected-info">Browser detection will appear here...</span>
+              </div>
+            </div>
+
+            <!-- File Attachments -->
+            <div class="form-section">
+              <h3>Attachments (Optional)</h3>
+
+              <label for="screenshot">Screenshots or Files</label>
+              <div class="screenshot-upload">
+                <input type="file" id="screenshot" name="screenshot" multiple accept="image/*,.pdf,.doc,.docx,.txt">
+                <p>📎 Drag and drop files here or click to browse</p>
+                <small>Supported formats: Images, PDF, Word documents, Text files (Max 10MB each)</small>
+              </div>
+
+              <label for="additional-files">Error Logs or Additional Files</label>
+              <input type="file" id="additional-files" name="additional-files" multiple accept=".log,.txt,.json,.xml">
+            </div>
+
+            <!-- GitHub Integration -->
+            <div class="github-integration">
+              <h4>
+                <svg class="github-logo" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                GitHub Integration
+              </h4>
+              <p>This issue will be automatically submitted to our GitHub issue tracker for development team review. You'll receive email updates on the issue progress.</p>
+
+              <fieldset>
+                <label for="public-issue">
+                  <input type="checkbox" id="public-issue" name="public-issue" role="switch">
+                  Make this issue public (visible to all team members)
+                </label>
+              </fieldset>
+
+              <fieldset>
+                <label for="urgent-issue">
+                  <input type="checkbox" id="urgent-issue" name="urgent-issue" role="switch">
+                  Mark as urgent (will notify development team immediately)
+                </label>
+              </fieldset>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div style="margin-top: 2rem;">
+              <button type="submit" style="margin-right: 1rem;">
+                🚀 Submit to GitHub Issues
+              </button>
+              <button type="button" class="secondary outline">
+                💾 Save as Draft
+              </button>
+              <button type="reset" class="outline">
+                🔄 Reset Form
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Troubleshooting Section -->
+      <section id="troubleshooting" style="display: none;">
+        <h2>Self-Service Troubleshooting</h2>
+
+        <!-- Common Issues -->
+        <div class="support-card">
+          <h3>🔧 Common Issues & Solutions</h3>
+
+          <details>
+            <summary><strong>Page won't load or loads slowly</strong></summary>
+            <div style="padding: 1rem 0;">
+              <p><strong>Try these steps:</strong></p>
+              <ol>
+                <li>Refresh the page (Ctrl+F5 or Cmd+Shift+R)</li>
+                <li>Clear your browser cache and cookies</li>
+                <li>Try a different browser or incognito/private mode</li>
+                <li>Check your internet connection</li>
+                <li>Disable browser extensions temporarily</li>
+              </ol>
+              <p><strong>Still having issues?</strong> Report it using the form above.</p>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>Login problems or authentication errors</strong></summary>
+            <div style="padding: 1rem 0;">
+              <p><strong>Try these steps:</strong></p>
+              <ol>
+                <li>Verify your username and password</li>
+                <li>Clear browser cookies for this site</li>
+                <li>Try logging in from a different browser</li>
+                <li>Check if Caps Lock is enabled</li>
+                <li>Reset your password if needed</li>
+              </ol>
+              <p><strong>Still can't log in?</strong> Contact IT support at <a href="mailto:it@phazebreak.com">it@phazebreak.com</a></p>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>Forms not submitting or errors when saving</strong></summary>
+            <div style="padding: 1rem 0;">
+              <p><strong>Try these steps:</strong></p>
+              <ol>
+                <li>Check that all required fields are filled out</li>
+                <li>Verify file uploads are under size limits</li>
+                <li>Try submitting without attachments first</li>
+                <li>Disable ad blockers or script blockers</li>
+                <li>Try using a different browser</li>
+              </ol>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>Database search not returning results</strong></summary>
+            <div style="padding: 1rem 0;">
+              <p><strong>Try these steps:</strong></p>
+              <ol>
+                <li>Check your search terms for typos</li>
+                <li>Try broader search terms</li>
+                <li>Clear all filters and try again</li>
+                <li>Verify you have permission to access the data</li>
+                <li>Try the "All Fields" search option</li>
+              </ol>
+            </div>
+          </details>
+
+          <details>
+            <summary><strong>Downloads failing or corrupted files</strong></summary>
+            <div style="padding: 1rem 0;">
+              <p><strong>Try these steps:</strong></p>
+              <ol>
+                <li>Right-click and "Save Link As" instead of direct clicking</li>
+                <li>Try downloading from a different browser</li>
+                <li>Temporarily disable antivirus software</li>
+                <li>Check available disk space</li>
+                <li>Try downloading smaller files first</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+
+        <!-- Browser Compatibility -->
+        <div class="support-card">
+          <h3>🌐 Supported Browsers</h3>
+          <div class="grid">
+            <div>
+              <h4>✅ Fully Supported</h4>
+              <ul>
+                <li>Chrome 100+</li>
+                <li>Firefox 100+</li>
+                <li>Safari 15+</li>
+                <li>Edge 100+</li>
+              </ul>
+            </div>
+            <div>
+              <h4>⚠️ Limited Support</h4>
+              <ul>
+                <li>Internet Explorer 11</li>
+                <li>Older mobile browsers</li>
+                <li>Chrome < 90</li>
+                <li>Firefox < 90</li>
+              </ul>
+            </div>
+          </div>
+          <p><small>For the best experience, please keep your browser updated to the latest version.</small></p>
+        </div>
+
+        <!-- System Requirements -->
+        <div class="support-card">
+          <h3>💻 System Requirements</h3>
+          <div class="grid">
+            <div>
+              <h4>Minimum Requirements</h4>
+              <ul>
+                <li><strong>RAM:</strong> 4GB</li>
+                <li><strong>Internet:</strong> 5 Mbps</li>
+                <li><strong>Resolution:</strong> 1024x768</li>
+                <li><strong>JavaScript:</strong> Enabled</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Recommended</h4>
+              <ul>
+                <li><strong>RAM:</strong> 8GB+</li>
+                <li><strong>Internet:</strong> 25 Mbps+</li>
+                <li><strong>Resolution:</strong> 1920x1080+</li>
+                <li><strong>Ad Blocker:</strong> Disabled for this site</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Status Section -->
+      <section id="system-status" style="display: none;">
+        <h2>📊 System Status & Performance</h2>
+
+        <div class="grid">
+          <!-- Current Status -->
+          <div class="support-card">
+            <h3>Current System Status</h3>
+            <div class="status-indicator">
+              <div class="status-dot status-operational"></div>
+              <div>
+                <strong>Overall System Health</strong><br>
+                <small>All systems operational</small>
+              </div>
+            </div>
+
+            <hr>
+
+            <h4>Service Status</h4>
+            <div style="margin: 1rem 0;">
+              <div class="status-indicator">
+                <div class="status-dot status-operational"></div>
+                <span>Website Frontend</span>
+              </div>
+              <div class="status-indicator">
+                <div class="status-dot status-operational"></div>
+                <span>Database Services</span>
+              </div>
+              <div class="status-indicator">
+                <div class="status-dot status-degraded"></div>
+                <span>RSS Feed Integration</span>
+              </div>
+              <div class="status-indicator">
+                <div class="status-dot status-operational"></div>
+                <span>File Download System</span>
+              </div>
+              <div class="status-indicator">
+                <div class="status-dot status-operational"></div>
+                <span>Search Functionality</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance Metrics -->
+          <div class="support-card">
+            <h3>Performance Metrics</h3>
+            <div style="text-align: center;">
+              <h4 style="color: var(--pico-primary); margin: 0;">1.2s</h4>
+              <small>Average Page Load Time</small>
+            </div>
+            <hr>
+            <div style="text-align: center;">
+              <h4 style="color: var(--pico-primary); margin: 0;">99.9%</h4>
+              <small>Uptime This Month</small>
+            </div>
+            <hr>
+            <div style="text-align: center;">
+              <h4 style="color: var(--pico-primary); margin: 0;">2,847</h4>
+              <small>Active Users Today</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Incidents -->
+        <div class="support-card">
+          <h3>Recent Incidents</h3>
+          <div class="recent-issues">
+            <div class="issue-item">
+              <div class="issue-title">RSS Feed Delays</div>
+              <div class="issue-meta">
+                <span class="severity-badge severity-medium">Medium</span>
+                Started: Jan 15, 2024 14:30 UTC • Status: Investigating
+              </div>
+              <p style="margin: 0.5rem 0; font-size: 0.875rem;">External RSS feeds experiencing 5-10 minute delays. Internal systems unaffected.</p>
+            </div>
+
+            <div class="issue-item">
+              <div class="issue-title">Database Maintenance Complete</div>
+              <div class="issue-meta">
+                <span class="severity-badge severity-low">Maintenance</span>
+                Jan 14, 2024 02:00-04:00 UTC • Status: Resolved
+              </div>
+              <p style="margin: 0.5rem 0; font-size: 0.875rem;">Scheduled database optimization completed successfully. No data loss.</p>
+            </div>
+
+            <div class="issue-item">
+              <div class="issue-title">Search Performance Improvement</div>
+              <div class="issue-meta">
+                <span class="severity-badge severity-enhancement">Enhancement</span>
+                Jan 12, 2024 • Status: Deployed
+              </div>
+              <p style="margin: 0.5rem 0; font-size: 0.875rem;">Search response time improved by 40% with new indexing algorithm.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maintenance Schedule -->
+        <div class="support-card">
+          <h3>🗓️ Scheduled Maintenance</h3>
+          <div class="schedule-item">
+            <div class="schedule-time">January 28, 2024 • 2:00 AM - 4:00 AM UTC</div>
+            <h4 class="schedule-title">Database Backup System Upgrade</h4>
+            <p class="schedule-description">Upgrading backup infrastructure. No user impact expected.</p>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">February 15, 2024 • 1:00 AM - 3:00 AM UTC</div>
+            <h4 class="schedule-title">Security Patches Deployment</h4>
+            <p class="schedule-description">Applying latest security updates. Brief service interruption possible.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section id="faq" style="display: none;">
+        <h2>❓ Frequently Asked Questions</h2>
+
+        <div class="support-card">
+          <h3>General Questions</h3>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>How do I access the internal database?</strong></summary>
+              <p>The database search is available to all employees through the main navigation menu. If you're having trouble accessing it, ensure you're logged in with your company credentials and contact IT if the issue persists.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Why can't I download certain files?</strong></summary>
+              <p>File access depends on your user permissions and department. Some technical documents are restricted to engineering and sales teams. Contact your manager if you need access to specific resources.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>How often is the news feed updated?</strong></summary>
+              <p>The renewable energy RSS feeds are updated every 15 minutes, while LinkedIn feeds refresh every 30 minutes. Manual refresh buttons are available if you need immediate updates.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Can I use the website on my mobile device?</strong></summary>
+              <p>Yes! The website is fully responsive and optimized for mobile devices. Some advanced features work best on tablets or desktops, but all core functionality is available on mobile.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="support-card">
+          <h3>Technical Questions</h3>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Which browsers are supported?</strong></summary>
+              <p>We support Chrome 100+, Firefox 100+, Safari 15+, and Edge 100+. Internet Explorer has limited support. For the best experience, please use the latest version of your preferred browser.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Why am I getting certificate warnings?</strong></summary>
+              <p>This typically happens when accessing the site from an untrusted network. Ensure you're using the correct URL (https://phazebreak.com) and contact IT if the warnings persist from the office network.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>How do I clear my browser cache?</strong></summary>
+              <p><strong>Chrome:</strong> Ctrl+Shift+Delete, select "All time", check "Cached images and files"<br>
+              <strong>Firefox:</strong> Ctrl+Shift+Delete, select "Everything", check "Cache"<br>
+              <strong>Safari:</strong> Safari menu > Clear History, select "All History"</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>What should I do if the website is completely down?</strong></summary>
+              <p>First, check if it's just your connection by trying other websites. If the site is truly down, email <a href="mailto:it@phazebreak.com">it@phazebreak.com</a> or call the IT help desk at ext. 911. We monitor uptime 24/7.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="support-card">
+          <h3>Account & Access Questions</h3>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>I forgot my password. How do I reset it?</strong></summary>
+              <p>Use the "Forgot Password" link on the login page, or contact IT support. For security reasons, only IT can reset passwords for internal accounts.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Why do I see "Access Denied" on some pages?</strong></summary>
+              <p>Page access is controlled by department and role. Sales staff can access customer data, engineering can access technical documents, etc. Contact your manager if you need additional permissions.</p>
+            </details>
+          </div>
+
+          <div class="faq-item">
+            <details>
+              <summary><strong>Can external partners access our website?</strong></summary>
+              <p>We have a separate portal for approved partners and vendors. Internal company pages are restricted to employees only. Contact business development for partner access requests.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent GitHub Issues -->
+      <section style="margin-top: 3rem;">
+        <h2>📋 Recent GitHub Issues</h2>
+        <div class="grid">
+          <div class="support-card">
+            <h3>🐛 Open Issues</h3>
+            <div class="recent-issues">
+              <div class="issue-item priority-high">
+                <div class="issue-title">#47 Database search returning incomplete results</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-high">High</span>
+                  Opened by: Sarah M. • 2 hours ago • 3 comments
+                </div>
+              </div>
+
+              <div class="issue-item priority-medium">
+                <div class="issue-title">#46 Mobile navigation menu not responsive on iPad</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-medium">Medium</span>
+                  Opened by: James W. • 1 day ago • 1 comment
+                </div>
+              </div>
+
+              <div class="issue-item priority-low">
+                <div class="issue-title">#45 Add dark mode toggle to header</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-enhancement">Enhancement</span>
+                  Opened by: Maria R. • 3 days ago • 5 comments
+                </div>
+              </div>
+
+              <div class="issue-item priority-medium">
+                <div class="issue-title">#44 RSS feed timestamps showing incorrect timezone</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-medium">Medium</span>
+                  Opened by: David C. • 1 week ago • 2 comments
+                </div>
+              </div>
+            </div>
+            <button class="outline secondary" style="width: 100%; margin-top: 1rem;">
+              View All Open Issues on GitHub
+            </button>
+          </div>
+
+          <div class="support-card">
+            <h3>✅ Recently Resolved</h3>
+            <div class="recent-issues">
+              <div class="issue-item">
+                <div class="issue-title">#43 Export function not working in Chrome</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-high">High</span>
+                  Resolved by: Dev Team • Fixed in v2.1.4
+                </div>
+              </div>
+
+              <div class="issue-item">
+                <div class="issue-title">#42 Improve page load performance</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-medium">Medium</span>
+                  Resolved by: Dev Team • Fixed in v2.1.3
+                </div>
+              </div>
+
+              <div class="issue-item">
+                <div class="issue-title">#41 Add keyboard shortcuts for power users</div>
+                <div class="issue-meta">
+                  <span class="severity-badge severity-enhancement">Enhancement</span>
+                  Resolved by: Dev Team • Fixed in v2.1.2
+                </div>
+              </div>
+            </div>
+            <button class="outline secondary" style="width: 100%; margin-top: 1rem;">
+              View All Closed Issues on GitHub
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Information -->
+      <section style="margin-top: 3rem;">
+        <h2>📞 Additional Support</h2>
+        <div class="grid">
+          <article>
+            <header>
+              <h3>IT Help Desk</h3>
+            </header>
+            <p>For urgent technical issues or if you can't access this form:</p>
+            <ul>
+              <li><strong>Phone:</strong> <a href="tel:+1-800-PHAZEBRK-911">1-800-PHAZEBRK ext. 911</a></li>
+              <li><strong>Email:</strong> <a href="mailto:it@phazebreak.com">it@phazebreak.com</a></li>
+              <li><strong>Hours:</strong> Mon-Fri 8AM-6PM CST</li>
+            </ul>
+          </article>
+
+          <article>
+            <header>
+              <h3>Development Team</h3>
+            </header>
+            <p>For feature requests and enhancement suggestions:</p>
+            <ul>
+              <li><strong>GitHub:</strong> <a href="https://github.com/phazebreak/website-issues" target="_blank">phazebreak/website-issues</a></li>
+              <li><strong>Email:</strong> <a href="mailto:dev@phazebreak.com">dev@phazebreak.com</a></li>
+              <li><strong>Sprint Planning:</strong> Bi-weekly reviews</li>
+            </ul>
+          </article>
+
+          <article>
+            <header>
+              <h3>Emergency Contacts</h3>
+            </header>
+            <p>For critical system outages outside business hours:</p>
+            <ul>
+              <li><strong>On-call Engineer:</strong> <a href="tel:+1-555-DEV-ONCALL">1-555-DEV-ONCALL</a></li>
+              <li><strong>System Status:</strong> <a href="https://status.phazebreak.com" target="_blank">status.phazebreak.com</a></li>
+              <li><strong>Incident Response:</strong> Auto-escalation after 15min</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+      <div class="grid">
+        <div>
+          <h5>PhazeBreak Coatings</h5>
+          <p>Internal website support and issue tracking system.</p>
+        </div>
+        <div>
+          <h6>Development Info</h6>
+          <p>
+            Version: 2.1.4 •
+            Last Deploy: Jan 15, 2024 •
+            <a href="https://github.com/phazebreak/website" target="_blank">Source Code</a>
+          </p>
+        </div>
+        <div>
+          <h6>System Health</h6>
+          <p>
+            <span style="color: #28a745;">● Operational</span><br>
+            Uptime: 99.9% this month<br>
+            <a href="#system-status">View Full Status</a>
+          </p>
+        </div>
+      </div>
+      <hr>
+      <small>
+        © 2024 PhazeBreak Coatings. All rights reserved. •
+        <a href="#privacy">Privacy Policy</a> •
+        <a href="https://github.com/phazebreak/website-issues/blob/main/SECURITY.md" target="_blank">Security Policy</a>
+      </small>
+    </footer>
+
+    <!-- Success Modal -->
+    <dialog id="success-modal">
+      <article>
+        <header>
+          <h3>✅ Issue Submitted Successfully!</h3>
+        </header>
+        <p>Your issue has been submitted to GitHub and assigned issue number <strong>#48</strong>.</p>
+        <p>You'll receive email notifications when the development team updates your issue. Expected response time is 1-2 business days for non-critical issues.</p>
+        <footer>
+          <button onclick="event.preventDefault()">
+            View Issue on GitHub
+          </button>
+          <button class="secondary" onclick="event.preventDefault()">
+            Submit Another Issue
+          </button>
+        </footer>
+      </article>
+    </dialog>
+
+    <!-- JavaScript for browser detection (no actual functionality, just structure) -->
+    <script>
+      // Browser detection function placeholder
+      function detectBrowserInfo() {
+        const browserInfo = document.getElementById('browser-info');
+        const detectedInfo = document.getElementById('detected-info');
+
+        // In a real implementation, this would detect actual browser info
+        const mockData = `
+User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
+Browser: Chrome 120.0.6099.109
+OS: Windows 10
+Screen: 1920x1080
+Viewport: 1200x800
+JavaScript: Enabled
+Cookies: Enabled
+Local Storage: Supported
+        `;
+
+        detectedInfo.textContent = mockData.trim();
+        browserInfo.style.display = 'block';
+
+        // Auto-fill form fields with detected info
+        document.getElementById('browser').value = 'chrome';
+        document.getElementById('browser-version').value = '120.0.6099.109';
+        document.getElementById('operating-system').value = 'windows';
+        document.getElementById('screen-resolution').value = '1920x1080';
+        document.getElementById('device-desktop').checked = true;
+      }
+
+      // Tab switching placeholder
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+          // Remove active class from all tabs
+          document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
+          // Add active to clicked tab
+          this.classList.add('active');
+
+          // Hide all sections
+          document.querySelectorAll('section[id]').forEach(section => {
+            if (section.id !== 'report-issue' || this.textContent.includes('Report Issue')) {
+              section.style.display = 'none';
+            }
+          });
+
+          // Show relevant section based on tab clicked
+          if (this.textContent.includes('Troubleshooting')) {
+            document.getElementById('troubleshooting').style.display = 'block';
+          } else if (this.textContent.includes('System Status')) {
+            document.getElementById('system-status').style.display = 'block';
+          } else if (this.textContent.includes('FAQ')) {
+            document.getElementById('faq').style.display = 'block';
+          } else {
+            document.getElementById('report-issue').style.display = 'block';
+          }
+        });
+      });
+
+      // Form submission placeholder
+      document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // In a real implementation, this would:
+        // 1. Validate all form data
+        // 2. Package the data for GitHub API
+        // 3. Submit to GitHub Issues API
+        // 4. Handle the response
+
+        console.log('Form would be submitted to GitHub Issues API');
+        alert('Issue submitted successfully! (In real implementation, this would create a GitHub issue)');
+
+        // Show success modal (placeholder)
+        // document.getElementById('success-modal').showModal();
+      });
+    </script>
+  </body>
+</html>

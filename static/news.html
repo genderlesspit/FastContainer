@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>News & Updates</title>
+    <meta name="description" content="Latest industry news, renewable energy updates, and company announcements from PhazeBreak Coatings.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .news-card {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s ease;
+        background: var(--pico-card-background-color);
+      }
+
+      .news-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .news-source {
+        display: inline-block;
+        background: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+
+      .news-date {
+        color: var(--pico-muted-color);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .news-title {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.25rem;
+        line-height: 1.4;
+      }
+
+      .news-excerpt {
+        color: var(--pico-color);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .news-tags {
+        margin-bottom: 1rem;
+      }
+
+      .tag {
+        display: inline-block;
+        background: var(--pico-secondary);
+        color: var(--pico-secondary-inverse);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        margin: 0.25rem 0.25rem 0.25rem 0;
+      }
+
+      .linkedin-post {
+        border-left: 4px solid #0077b5;
+        background: var(--pico-card-background-color);
+      }
+
+      .rss-article {
+        border-left: 4px solid #28a745;
+      }
+
+      .feed-section {
+        margin-bottom: 3rem;
+      }
+
+      .feed-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--pico-primary);
+      }
+
+      .feed-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 0.5rem;
+      }
+
+      .refresh-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .loading-placeholder {
+        text-align: center;
+        padding: 3rem;
+        color: var(--pico-muted-color);
+      }
+
+      .filter-tabs {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--pico-border-color);
+      }
+
+      .filter-tab {
+        background: none;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        color: var(--pico-muted-color);
+        transition: all 0.2s ease;
+      }
+
+      .filter-tab.active {
+        color: var(--pico-primary);
+        border-bottom-color: var(--pico-primary);
+      }
+
+      .filter-tab:hover {
+        color: var(--pico-color);
+        background: var(--pico-muted-border-color);
+      }
+
+      .news-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--pico-muted-border-color);
+        font-size: 0.875rem;
+        color: var(--pico-muted-color);
+      }
+
+      .engagement-stats {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .engagement-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>PhazeBreak Coatings</h1>
+        <p>News & Industry Updates</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#renewable-news">Renewable Energy</a></li>
+          <li><a href="#linkedin-feed">LinkedIn Updates</a></li>
+          <li><a href="#company-news">Company News</a></li>
+        </ul>
+        <ul>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All News</button>
+        <button class="filter-tab" data-filter="renewable">Renewable Energy</button>
+        <button class="filter-tab" data-filter="linkedin">LinkedIn</button>
+        <button class="filter-tab" data-filter="company">Company</button>
+      </div>
+
+      <!-- Search and Settings -->
+      <section style="margin-bottom: 2rem;">
+        <div class="grid">
+          <input type="search" id="news-search" placeholder="Search news articles..." aria-label="Search news">
+          <select id="sort-order" aria-label="Sort articles">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="relevance">Most Relevant</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Renewable Energy RSS Feed -->
+      <section id="renewable-news" class="feed-section">
+        <div class="feed-header">
+          <h2>
+            <svg class="feed-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Renewable Energy News
+          </h2>
+          <button class="refresh-btn outline secondary" onclick="refreshRSSFeed()">
+            🔄 Refresh Feed
+          </button>
+        </div>
+
+        <div id="rss-container">
+          <div class="news-card rss-article">
+            <div class="news-source">Clean Energy Wire</div>
+            <div class="news-date">January 15, 2024</div>
+            <h3 class="news-title">Advanced Thermal Coatings Drive Solar Panel Efficiency Gains</h3>
+            <p class="news-excerpt">
+              New research demonstrates that specialized thermal barrier coatings can improve solar panel efficiency by up to 12% while extending operational lifespan in extreme temperature environments. The study focuses on applications in desert installations where traditional panels face significant thermal stress.
+            </p>
+            <div class="news-tags">
+              <span class="tag">Solar Energy</span>
+              <span class="tag">Thermal Management</span>
+              <span class="tag">Efficiency</span>
+            </div>
+            <div class="news-meta">
+              <span>Source: Clean Energy Wire</span>
+              <div class="engagement-stats">
+                <span>👁️ 2,341 views</span>
+                <span>💬 18 comments</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openArticle('solar-efficiency-coatings')">Read Full Article</button>
+          </div>
+
+          <div class="news-card rss-article">
+            <div class="news-source">Renewable Energy World</div>
+            <div class="news-date">January 12, 2024</div>
+            <h3 class="news-title">Wind Turbine Blade Protection: Next-Generation Coating Solutions</h3>
+            <p class="news-excerpt">
+              Industry experts discuss the critical role of protective coatings in extending wind turbine blade life. New formulations show promise in reducing maintenance costs while improving aerodynamic performance in harsh weather conditions.
+            </p>
+            <div class="news-tags">
+              <span class="tag">Wind Energy</span>
+              <span class="tag">Blade Technology</span>
+              <span class="tag">Maintenance</span>
+            </div>
+            <div class="news-meta">
+              <span>Source: Renewable Energy World</span>
+              <div class="engagement-stats">
+                <span>👁️ 1,987 views</span>
+                <span>💬 25 comments</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openArticle('wind-blade-protection')">Read Full Article</button>
+          </div>
+
+          <div class="news-card rss-article">
+            <div class="news-source">Energy Storage News</div>
+            <div class="news-date">January 10, 2024</div>
+            <h3 class="news-title">Thermal Management in Large-Scale Battery Storage Systems</h3>
+            <p class="news-excerpt">
+              As grid-scale battery installations grow larger, effective thermal management becomes crucial for safety and performance. Innovative coating technologies are emerging as key solutions for temperature regulation in battery enclosures.
+            </p>
+            <div class="news-tags">
+              <span class="tag">Energy Storage</span>
+              <span class="tag">Battery Technology</span>
+              <span class="tag">Safety</span>
+            </div>
+            <div class="news-meta">
+              <span>Source: Energy Storage News</span>
+              <div class="engagement-stats">
+                <span>👁️ 3,156 views</span>
+                <span>💬 31 comments</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openArticle('battery-thermal-management')">Read Full Article</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LinkedIn Feed -->
+      <section id="linkedin-feed" class="feed-section">
+        <div class="feed-header">
+          <h2>
+            <svg class="feed-icon" viewBox="0 0 24 24" fill="#0077b5">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn Updates
+          </h2>
+          <button class="refresh-btn outline secondary" onclick="refreshLinkedInFeed()">
+            🔄 Refresh Feed
+          </button>
+        </div>
+
+        <div id="linkedin-container">
+          <div class="news-card linkedin-post">
+            <div class="news-source">PhazeBreak Coatings</div>
+            <div class="news-date">2 hours ago</div>
+            <h3 class="news-title">Successful Installation at Renewable Energy Expo 2024</h3>
+            <p class="news-excerpt">
+              Thrilled to showcase our latest PB-2000 series thermal barrier coatings at the Renewable Energy Expo! Our booth demonstrations showed impressive temperature reduction capabilities that caught the attention of major solar and wind energy companies. Thank you to everyone who stopped by to learn about our innovative solutions.
+            </p>
+            <div class="news-tags">
+              <span class="tag">Trade Show</span>
+              <span class="tag">PB-2000 Series</span>
+              <span class="tag">Networking</span>
+            </div>
+            <div class="news-meta">
+              <span>Posted by PhazeBreak Coatings</span>
+              <div class="engagement-stats">
+                <span>👍 47 likes</span>
+                <span>💬 12 comments</span>
+                <span>🔄 8 shares</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openLinkedInPost('expo-2024-recap')">View on LinkedIn</button>
+          </div>
+
+          <div class="news-card linkedin-post">
+            <div class="news-source">PhazeBreak Coatings</div>
+            <div class="news-date">1 day ago</div>
+            <h3 class="news-title">New Partnership with SolarTech Industries</h3>
+            <p class="news-excerpt">
+              Excited to announce our strategic partnership with SolarTech Industries! This collaboration will bring our advanced thermal management solutions to their next-generation solar panel installations across the Southwest. Together, we're pushing the boundaries of renewable energy efficiency.
+            </p>
+            <div class="news-tags">
+              <span class="tag">Partnership</span>
+              <span class="tag">Solar Energy</span>
+              <span class="tag">Growth</span>
+            </div>
+            <div class="news-meta">
+              <span>Posted by PhazeBreak Coatings</span>
+              <div class="engagement-stats">
+                <span>👍 89 likes</span>
+                <span>💬 23 comments</span>
+                <span>🔄 15 shares</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openLinkedInPost('solartech-partnership')">View on LinkedIn</button>
+          </div>
+
+          <div class="news-card linkedin-post">
+            <div class="news-source">John Martinez, CEO</div>
+            <div class="news-date">3 days ago</div>
+            <h3 class="news-title">Reflecting on 15 Years of Innovation</h3>
+            <p class="news-excerpt">
+              As we celebrate PhazeBreak's 15th anniversary, I'm amazed by how far we've come. From a small R&D lab to a leading provider of thermal barrier solutions for renewable energy. Our team's dedication to innovation continues to drive breakthroughs that help our planet transition to sustainable energy. Here's to the next 15 years!
+            </p>
+            <div class="news-tags">
+              <span class="tag">Anniversary</span>
+              <span class="tag">Leadership</span>
+              <span class="tag">Innovation</span>
+            </div>
+            <div class="news-meta">
+              <span>Posted by John Martinez</span>
+              <div class="engagement-stats">
+                <span>👍 156 likes</span>
+                <span>💬 34 comments</span>
+                <span>🔄 28 shares</span>
+              </div>
+            </div>
+            <button class="outline" onclick="openLinkedInPost('15-year-anniversary')">View on LinkedIn</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Company News -->
+      <section id="company-news" class="feed-section">
+        <div class="feed-header">
+          <h2>
+            <svg class="feed-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Company News
+          </h2>
+        </div>
+
+        <div class="news-card">
+          <div class="news-source">PhazeBreak Coatings</div>
+          <div class="news-date">January 8, 2024</div>
+          <h3 class="news-title">Q4 2023 Results: Record Growth in Renewable Energy Sector</h3>
+          <p class="news-excerpt">
+            PhazeBreak Coatings reports exceptional Q4 2023 performance with 45% year-over-year growth in renewable energy applications. Our thermal barrier solutions played a key role in major solar and wind projects across North America.
+          </p>
+          <div class="news-tags">
+            <span class="tag">Quarterly Results</span>
+            <span class="tag">Growth</span>
+            <span class="tag">Renewable Energy</span>
+          </div>
+          <button class="outline" onclick="openPressRelease('q4-2023-results')">Read Press Release</button>
+        </div>
+
+        <div class="news-card">
+          <div class="news-source">PhazeBreak Coatings</div>
+          <div class="news-date">December 22, 2023</div>
+          <h3 class="news-title">New R&D Facility Opens in Austin, Texas</h3>
+          <p class="news-excerpt">
+            Our state-of-the-art research and development facility in Austin is now operational, focusing on next-generation thermal management solutions for emerging renewable energy technologies. The 50,000 sq ft facility houses advanced testing laboratories and clean rooms.
+          </p>
+          <div class="news-tags">
+            <span class="tag">R&D</span>
+            <span class="tag">Facility</span>
+            <span class="tag">Austin</span>
+          </div>
+          <button class="outline" onclick="openPressRelease('austin-facility-opening')">Read Press Release</button>
+        </div>
+      </section>
+
+    <!-- Scripts -->
+    <script>
+      // Theme switcher functionality
+      const themeSwitcher = {
+        init() {
+          document.querySelectorAll('[data-theme-switcher]').forEach(button => {
+            button.addEventListener('click', (e) => {
+              e.preventDefault();
+              const theme = e.target.getAttribute('data-theme-switcher');
+              this.setTheme(theme);
+            });
+          });
+        },
+
+        setTheme(theme) {
+          if (theme === 'auto') {
+            document.documentElement.removeAttribute('data-theme');
+          } else {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+          localStorage.setItem('theme', theme);
+        }
+      };
+
+      // Filter functionality
+      function initializeFilters() {
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const searchInput = document.getElementById('news-search');
+        const sortOrder = document.getElementById('sort-order');
+
+        filterTabs.forEach(tab => {
+          tab.addEventListener('click', (e) => {
+            // Remove active class from all tabs
+            filterTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            e.target.classList.add('active');
+
+            const filter = e.target.getAttribute('data-filter');
+            filterNews(filter);
+          });
+        });
+
+        searchInput.addEventListener('input', () => searchNews());
+        sortOrder.addEventListener('change', () => sortNews());
+      }
+
+      function filterNews(filter) {
+        const newsCards = document.querySelectorAll('.news-card');
+
+        newsCards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = 'block';
+          } else if (filter === 'renewable' && card.classList.contains('rss-article')) {
+            card.style.display = 'block';
+          } else if (filter === 'linkedin' && card.classList.contains('linkedin-post')) {
+            card.style.display = 'block';
+          } else if (filter === 'company' && !card.classList.contains('rss-article') && !card.classList.contains('linkedin-post')) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      function searchNews() {
+        const searchTerm = document.getElementById('news-search').value.toLowerCase();
+        const newsCards = document.querySelectorAll('.news-card');
+
+        newsCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      function sortNews() {
+        const sortOrder = document.getElementById('sort-order').value;
+        const containers = ['rss-container', 'linkedin-container'];
+
+        containers.forEach(containerId => {
+          const container = document.getElementById(containerId);
+          if (!container) return;
+
+          const cards = Array.from(container.querySelectorAll('.news-card'));
+
+          cards.sort((a, b) => {
+            const dateA = new Date(a.querySelector('.news-date').textContent);
+            const dateB = new Date(b.querySelector('.news-date').textContent);
+
+            if (sortOrder === 'newest') {
+              return dateB - dateA;
+            } else if (sortOrder === 'oldest') {
+              return dateA - dateB;
+            }
+            // For relevance, keep original order
+            return 0;
+          });
+
+          // Reorder the DOM elements
+          cards.forEach(card => container.appendChild(card));
+        });
+      }
+
+      // Feed refresh functions
+      async function refreshRSSFeed() {
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = '🔄 Refreshing...';
+
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // In a real implementation, this would fetch new RSS data
+        console.log('Refreshing RSS feed...');
+
+        button.disabled = false;
+        button.textContent = '🔄 Refresh Feed';
+
+        // Show success message
+        alert('RSS feed refreshed successfully!');
+      }
+
+      async function refreshLinkedInFeed() {
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = '🔄 Refreshing...';
+
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // In a real implementation, this would fetch new LinkedIn data
+        console.log('Refreshing LinkedIn feed...');
+
+        button.disabled = false;
+        button.textContent = '🔄 Refresh Feed';
+
+        // Show success message
+        alert('LinkedIn feed refreshed successfully!');
+      }
+
+      // Article and post opening functions
+      function openArticle(articleId) {
+        console.log(`Opening article: ${articleId}`);
+        // In a real implementation, this would open the full article
+        alert(`Opening full article: ${articleId}`);
+      }
+
+      function openLinkedInPost(postId) {
+        console.log(`Opening LinkedIn post: ${postId}`);
+        // In a real implementation, this would open the LinkedIn post
+        alert(`Opening LinkedIn post: ${postId}`);
+      }
+
+      function openPressRelease(releaseId) {
+        console.log(`Opening press release: ${releaseId}`);
+        // In a real implementation, this would open the press release
+        alert(`Opening press release: ${releaseId}`);
+      }
+
+      // Newsletter subscription
+      document.querySelector('#newsletter form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = this.querySelector('input[type="email"]').value;
+        const frequency = this.querySelector('select').value;
+
+        alert(`Successfully subscribed ${email} to ${frequency} updates!`);
+        this.reset();
+      });
+
+      // Initialize everything when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        themeSwitcher.init();
+        initializeFilters();
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme && savedTheme !== 'auto') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+      });
+    </script>
+  </body>
+</html>

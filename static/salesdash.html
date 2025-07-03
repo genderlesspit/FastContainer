@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Sales Dashboard</title>
+    <meta name="description" content="A comprehensive salesperson dashboard for managing leads and tracking performance.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: var(--pico-card-background-color);
+        border: var(--pico-border-width) solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--pico-primary-600);
+        margin: 0;
+      }
+
+      .stat-label {
+        margin: 0.5rem 0 0 0;
+        color: var(--pico-muted-color);
+        font-size: 0.9rem;
+      }
+
+      .priority-high { color: var(--pico-del-color); }
+      .priority-medium { color: #ff9500; }
+      .priority-low { color: var(--pico-ins-color); }
+
+      .status-new { background-color: var(--pico-primary-100); }
+      .status-contacted { background-color: #fff3cd; }
+      .status-qualified { background-color: #d1ecf1; }
+      .status-proposal { background-color: #f8d7da; }
+
+      .activity-log {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .activity-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--pico-border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-description {
+        flex: 1;
+      }
+
+      .activity-time {
+        color: var(--pico-muted-color);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>Sales Dashboard</h1>
+        <p>Welcome back, Matiss! Here's your performance overview for today.</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#leads">My Leads</a></li>
+          <li><a href="#analytics">Analytics</a></li>
+          <li><a href="#log-activity">Log Activity</a></li>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Account</summary>
+              <ul>
+                <li><a href="#" onclick="event.preventDefault()">Profile</a></li>
+                <li><a href="#" onclick="event.preventDefault()">Settings</a></li>
+                <li><a href="#" onclick="event.preventDefault()">Sign Out</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <!-- ./ Header -->
+
+    <!-- Main -->
+    <main class="container">
+
+      <!-- Quick Stats -->
+      <section id="quick-stats">
+        <h2>Today's Overview</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-value">12</p>
+            <p class="stat-label">Active Leads</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-value">8</p>
+            <p class="stat-label">Calls Made</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-value">15</p>
+            <p class="stat-label">Emails Sent</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-value">$45,200</p>
+            <p class="stat-label">Pipeline Value</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Assigned Leads -->
+      <section id="leads">
+        <h2>Assigned Leads</h2>
+        <p>Manage your current prospects and track their progress through the sales funnel.</p>
+
+        <div class="overflow-auto">
+          <table class="striped">
+            <thead>
+              <tr>
+                <th scope="col">Company</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Email</th>
+                <th scope="col">Status</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Value</th>
+                <th scope="col">Last Contact</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="status-new">
+                <th scope="row">TechCorp Solutions</th>
+                <td>John Smith</td>
+                <td>john.smith@techcorp.com</td>
+                <td>New Lead</td>
+                <td class="priority-high">High</td>
+                <td>$12,500</td>
+                <td>Today</td>
+                <td>
+                  <button class="outline" onclick="event.preventDefault()">Contact</button>
+                </td>
+              </tr>
+              <tr class="status-contacted">
+                <th scope="row">Global Industries</th>
+                <td>Mary Johnson</td>
+                <td>mary.j@global-ind.com</td>
+                <td>Contacted</td>
+                <td class="priority-medium">Medium</td>
+                <td>$8,750</td>
+                <td>2 days ago</td>
+                <td>
+                  <button class="outline" onclick="event.preventDefault()">Follow Up</button>
+                </td>
+              </tr>
+              <tr class="status-qualified">
+                <th scope="row">StartupXYZ</th>
+                <td>Alex Chen</td>
+                <td>alex@startupxyz.io</td>
+                <td>Qualified</td>
+                <td class="priority-high">High</td>
+                <td>$15,000</td>
+                <td>Yesterday</td>
+                <td>
+                  <button class="outline" onclick="event.preventDefault()">Schedule Demo</button>
+                </td>
+              </tr>
+              <tr class="status-proposal">
+                <th scope="row">Enterprise Ltd</th>
+                <td>Robert Davis</td>
+                <td>r.davis@enterprise.com</td>
+                <td>Proposal Sent</td>
+                <td class="priority-low">Low</td>
+                <td>$9,950</td>
+                <td>1 week ago</td>
+                <td>
+                  <button class="outline" onclick="event.preventDefault()">Check Status</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <!-- ./ Assigned Leads -->
+
+      <!-- Analytics -->
+      <section id="analytics">
+        <h2>My Analytics</h2>
+        <p>Track your performance metrics and identify areas for improvement.</p>
+
+        <div class="grid">
+          <!-- Performance Metrics -->
+          <article>
+            <header><strong>This Month's Performance</strong></header>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <p class="stat-value">127</p>
+                <p class="stat-label">Total Calls</p>
+              </div>
+              <div class="stat-card">
+                <p class="stat-value">89</p>
+                <p class="stat-label">Emails Sent</p>
+              </div>
+              <div class="stat-card">
+                <p class="stat-value">23</p>
+                <p class="stat-label">Meetings Booked</p>
+              </div>
+              <div class="stat-card">
+                <p class="stat-value">7</p>
+                <p class="stat-label">Deals Closed</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Conversion Rates -->
+          <article>
+            <header><strong>Conversion Rates</strong></header>
+            <div>
+              <label for="lead-to-contact">Lead to Contact Rate</label>
+              <progress id="lead-to-contact" value="78" max="100">78%</progress>
+              <small>78% conversion rate</small>
+            </div>
+            <div>
+              <label for="contact-to-meeting">Contact to Meeting Rate</label>
+              <progress id="contact-to-meeting" value="35" max="100">35%</progress>
+              <small>35% conversion rate</small>
+            </div>
+            <div>
+              <label for="meeting-to-close">Meeting to Close Rate</label>
+              <progress id="meeting-to-close" value="42" max="100">42%</progress>
+              <small>42% conversion rate</small>
+            </div>
+          </article>
+        </div>
+
+        <!-- Goals Progress -->
+        <article>
+          <header><strong>Monthly Goals Progress</strong></header>
+          <div class="grid">
+            <div>
+              <label for="calls-goal">Calls Goal (200)</label>
+              <progress id="calls-goal" value="127" max="200">127/200</progress>
+              <small>127 of 200 calls completed (64%)</small>
+            </div>
+            <div>
+              <label for="revenue-goal">Revenue Goal ($50K)</label>
+              <progress id="revenue-goal" value="32500" max="50000">$32.5K/$50K</progress>
+              <small>$32,500 of $50,000 achieved (65%)</small>
+            </div>
+          </div>
+        </article>
+      </section>
+      <!-- ./ Analytics -->
+
+      <!-- Log Sales Activity -->
+      <section id="log-activity">
+        <h2>Log Sales Activity</h2>
+        <p>Record your interactions with prospects and customers.</p>
+
+        <div class="grid">
+          <!-- Activity Form -->
+          <form>
+            <h3>New Activity</h3>
+
+            <label for="activity-lead">Select Lead</label>
+            <select id="activity-lead" name="activity-lead" required>
+              <option value="" selected>Choose a lead...</option>
+              <option value="techcorp">TechCorp Solutions - John Smith</option>
+              <option value="global">Global Industries - Mary Johnson</option>
+              <option value="startup">StartupXYZ - Alex Chen</option>
+              <option value="enterprise">Enterprise Ltd - Robert Davis</option>
+            </select>
+
+            <label for="activity-type">Activity Type</label>
+            <select id="activity-type" name="activity-type" required>
+              <option value="" selected>Select activity type...</option>
+              <option value="call">Phone Call</option>
+              <option value="email">Email</option>
+              <option value="meeting">Meeting</option>
+              <option value="demo">Product Demo</option>
+              <option value="proposal">Proposal Sent</option>
+              <option value="follow-up">Follow-up</option>
+            </select>
+
+            <label for="activity-notes">Notes</label>
+            <textarea id="activity-notes" name="activity-notes" placeholder="Describe the interaction, outcomes, and next steps..." rows="4"></textarea>
+
+            <div class="grid">
+              <label for="activity-date">Date</label>
+              <label for="activity-time">Time</label>
+            </div>
+            <div class="grid">
+              <input type="date" id="activity-date" name="activity-date" value="2025-07-03">
+              <input type="time" id="activity-time" name="activity-time">
+            </div>
+
+            <label for="follow-up-date">Schedule Follow-up</label>
+            <input type="date" id="follow-up-date" name="follow-up-date">
+
+            <div class="grid">
+              <input type="reset" value="Clear Form" onclick="event.preventDefault()">
+              <input type="submit" value="Log Activity" onclick="event.preventDefault(); logActivity()">
+            </div>
+          </form>
+
+          <!-- Recent Activities -->
+          <article>
+            <header><strong>Recent Activities</strong></header>
+            <div class="activity-log">
+              <div class="activity-item">
+                <div class="activity-description">
+                  <strong>Phone Call</strong> with John Smith (TechCorp Solutions)<br>
+                  <small>Discussed requirements and scheduled demo for next week</small>
+                </div>
+                <div class="activity-time">2:30 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-description">
+                  <strong>Email Sent</strong> to Alex Chen (StartupXYZ)<br>
+                  <small>Follow-up proposal with pricing options</small>
+                </div>
+                <div class="activity-time">11:15 AM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-description">
+                  <strong>Meeting</strong> with Mary Johnson (Global Industries)<br>
+                  <small>Product demonstration completed successfully</small>
+                </div>
+                <div class="activity-time">Yesterday 3:00 PM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-description">
+                  <strong>Proposal Sent</strong> to Robert Davis (Enterprise Ltd)<br>
+                  <small>Custom solution proposal with 30-day implementation timeline</small>
+                </div>
+                <div class="activity-time">Yesterday 10:00 AM</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-description">
+                  <strong>Follow-up Call</strong> with TechCorp Solutions<br>
+                  <small>Confirmed budget and decision timeline</small>
+                </div>
+                <div class="activity-time">2 days ago</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <!-- ./ Log Sales Activity -->
+
+    </main>
+    <!-- ./ Main -->
+
+    <!-- Footer -->
+    <footer class="container">
+      <small>
+        Sales Dashboard • Built with <a href="https://picocss.com">Pico CSS</a> •
+        <a href="#" onclick="event.preventDefault()">Help & Support</a>
+      </small>
+    </footer>
+    <!-- ./ Footer -->
+
+    <script>
+      // Simple function to simulate activity logging
+      function logActivity() {
+        const lead = document.getElementById('activity-lead').value;
+        const type = document.getElementById('activity-type').value;
+        const notes = document.getElementById('activity-notes').value;
+
+        if (lead && type && notes) {
+          alert('Activity logged successfully!\n\nThis would normally save to your CRM system.');
+          // In a real application, this would send data to a server
+          document.querySelector('form').reset();
+
+          // Set today's date as default
+          document.getElementById('activity-date').value = '2025-07-03';
+        } else {
+          alert('Please fill in all required fields.');
+        }
+      }
+
+      // Set default date to today
+      document.getElementById('activity-date').value = '2025-07-03';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>Tradeshows</title>
+    <meta name="description" content="Tradeshow management, scheduling, and activity tracking for PhazeBreak Coatings.">
+
+    <!-- Pico.css -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.1.1/css/pico.min.css"
+    >
+
+    <style>
+      .tradeshow-card {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background: var(--pico-card-background-color);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .tradeshow-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .tradeshow-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .tradeshow-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        color: var(--pico-color);
+      }
+
+      .tradeshow-subtitle {
+        color: var(--pico-muted-color);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+
+      .tradeshow-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-upcoming {
+        background: #cce5ff;
+        color: #004085;
+      }
+
+      .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-completed {
+        background: #e2e3e5;
+        color: #495057;
+      }
+
+      .tradeshow-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: var(--pico-muted-background-color);
+        border-radius: var(--pico-border-radius);
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .meta-label {
+        font-size: 0.75rem;
+        color: var(--pico-muted-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+      }
+
+      .meta-value {
+        font-weight: 500;
+        color: var(--pico-color);
+      }
+
+      .tab-navigation {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--pico-border-color);
+      }
+
+      .tab-button {
+        background: none;
+        border: none;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        color: var(--pico-muted-color);
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+
+      .tab-button.active {
+        color: var(--pico-primary);
+        border-bottom-color: var(--pico-primary);
+        background: var(--pico-primary-background);
+      }
+
+      .schedule-item {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        background: var(--pico-card-background-color);
+      }
+
+      .schedule-time {
+        font-weight: bold;
+        color: var(--pico-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .schedule-title {
+        margin: 0 0 0.25rem 0;
+        font-size: 1rem;
+      }
+
+      .schedule-description {
+        color: var(--pico-muted-color);
+        font-size: 0.875rem;
+        margin: 0;
+      }
+
+      .activity-log {
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: var(--pico-card-background-color);
+      }
+
+      .activity-timestamp {
+        color: var(--pico-muted-color);
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .activity-content {
+        margin: 0;
+      }
+
+      .travel-section {
+        background: var(--pico-muted-background-color);
+        padding: 1rem;
+        border-radius: var(--pico-border-radius);
+        margin-top: 1rem;
+      }
+
+      .quick-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-section {
+        background: var(--pico-card-background-color);
+        border: 1px solid var(--pico-border-color);
+        border-radius: var(--pico-border-radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .priority-high {
+        border-left: 4px solid #dc3545;
+      }
+
+      .priority-medium {
+        border-left: 4px solid #ffc107;
+      }
+
+      .priority-low {
+        border-left: 4px solid #28a745;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="container">
+      <hgroup>
+        <h1>PhazeBreak Coatings</h1>
+        <p>Tradeshow Management & Activity Tracking</p>
+      </hgroup>
+      <nav>
+        <ul>
+          <li><a href="#my-shows">My Shows</a></li>
+          <li><a href="#schedule">Schedule Manager</a></li>
+          <li><a href="#activity-log">Activity Log</a></li>
+        </ul>
+        <ul>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Quick Actions</summary>
+              <ul>
+                <li><a href="#" onclick="event.preventDefault()">Add New Show</a></li>
+                <li><a href="#" onclick="event.preventDefault()">Export Calendar</a></li>
+                <li><a href="#" onclick="event.preventDefault()">Print Schedule</a></li>
+                <li><a href="#" onclick="event.preventDefault()">Generate Report</a></li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details class="dropdown">
+              <summary role="button" class="secondary">Theme</summary>
+              <ul>
+                <li><a href="#" data-theme-switcher="auto">Auto</a></li>
+                <li><a href="#" data-theme-switcher="light">Light</a></li>
+                <li><a href="#" data-theme-switcher="dark">Dark</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main class="container">
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-button active">📅 My Shows</button>
+        <button class="tab-button">🗓️ Schedule Manager</button>
+        <button class="tab-button">📝 Activity Log</button>
+      </div>
+
+      <!-- Filter Section -->
+      <section class="filter-section">
+        <h3>Filter & Search</h3>
+        <div class="grid">
+          <input type="search" placeholder="Search tradeshows..." aria-label="Search tradeshows">
+          <select aria-label="Filter by status">
+            <option value="">All Statuses</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select aria-label="Filter by year">
+            <option value="">All Years</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        <div style="margin-top: 1rem;">
+          <label for="date-range-start">Date Range</label>
+          <div class="grid">
+            <input type="date" id="date-range-start" placeholder="Start Date">
+            <input type="date" placeholder="End Date">
+            <button class="outline">Apply Filters</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- My Shows Section -->
+      <section id="my-shows">
+        <h2>My Tradeshows</h2>
+
+        <!-- Upcoming Show -->
+        <div class="tradeshow-card priority-high">
+          <div class="tradeshow-header">
+            <div>
+              <h3 class="tradeshow-title">Renewable Energy Expo 2024</h3>
+              <p class="tradeshow-subtitle">Las Vegas Convention Center • Booth #A345</p>
+            </div>
+            <span class="tradeshow-status status-confirmed">Confirmed</span>
+          </div>
+
+          <div class="tradeshow-meta">
+            <div class="meta-item">
+              <span class="meta-label">Event Dates</span>
+              <span class="meta-value">March 15-17, 2024</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Location</span>
+              <span class="meta-value">Las Vegas, NV</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Expected Attendance</span>
+              <span class="meta-value">25,000+ professionals</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Booth Size</span>
+              <span class="meta-value">20x20 ft</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Lead Goal</span>
+              <span class="meta-value">150 qualified leads</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Budget Allocated</span>
+              <span class="meta-value">$75,000</span>
+            </div>
+          </div>
+
+          <div class="travel-section">
+            <h4>Travel Information</h4>
+            <div class="grid">
+              <div>
+                <strong>Flight Details:</strong><br>
+                <small>Departure: March 14, 6:30 AM (AA1234)<br>
+                Return: March 18, 4:15 PM (AA5678)</small>
+              </div>
+              <div>
+                <strong>Hotel:</strong><br>
+                <small>Mandalay Bay Resort<br>
+                3950 S Las Vegas Blvd<br>
+                Conf #: REX2024-789</small>
+              </div>
+              <div>
+                <strong>Ground Transport:</strong><br>
+                <small>Enterprise Rental<br>
+                Pickup: McCarran Airport<br>
+                Confirmation: R456789</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="outline">View Details</button>
+            <button class="outline secondary">Edit Show</button>
+            <button class="outline">Download Materials</button>
+            <button class="outline secondary">Contact Organizer</button>
+          </div>
+        </div>
+
+        <!-- Confirmed Show -->
+        <div class="tradeshow-card priority-medium">
+          <div class="tradeshow-header">
+            <div>
+              <h3 class="tradeshow-title">Wind Power International Conference</h3>
+              <p class="tradeshow-subtitle">Houston Convention Center • Booth #W221</p>
+            </div>
+            <span class="tradeshow-status status-upcoming">Upcoming</span>
+          </div>
+
+          <div class="tradeshow-meta">
+            <div class="meta-item">
+              <span class="meta-label">Event Dates</span>
+              <span class="meta-value">May 8-10, 2024</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Location</span>
+              <span class="meta-value">Houston, TX</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Expected Attendance</span>
+              <span class="meta-value">18,000+ professionals</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Booth Size</span>
+              <span class="meta-value">10x10 ft</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Lead Goal</span>
+              <span class="meta-value">100 qualified leads</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Budget Allocated</span>
+              <span class="meta-value">$45,000</span>
+            </div>
+          </div>
+
+          <div class="travel-section">
+            <h4>Travel Information</h4>
+            <div class="grid">
+              <div>
+                <strong>Flight Details:</strong><br>
+                <small>Departure: May 7, 8:45 AM (UA2468)<br>
+                Return: May 11, 6:20 PM (UA1357)</small>
+              </div>
+              <div>
+                <strong>Hotel:</strong><br>
+                <small>Hilton Houston Post Oak<br>
+                2001 Post Oak Blvd<br>
+                Conf #: WPI2024-456</small>
+              </div>
+              <div>
+                <strong>Ground Transport:</strong><br>
+                <small>Uber for Business<br>
+                Account: PhazeBreak-HTX<br>
+                Contact: 555-0199</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="outline">View Details</button>
+            <button class="outline secondary">Edit Show</button>
+            <button class="outline">Request Materials</button>
+            <button class="outline secondary">Book Travel</button>
+          </div>
+        </div>
+
+        <!-- Pending Show -->
+        <div class="tradeshow-card priority-low">
+          <div class="tradeshow-header">
+            <div>
+              <h3 class="tradeshow-title">Solar Power Summit 2024</h3>
+              <p class="tradeshow-subtitle">Phoenix Convention Center • Booth TBD</p>
+            </div>
+            <span class="tradeshow-status status-pending">Pending</span>
+          </div>
+
+          <div class="tradeshow-meta">
+            <div class="meta-item">
+              <span class="meta-label">Event Dates</span>
+              <span class="meta-value">September 12-14, 2024</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Location</span>
+              <span class="meta-value">Phoenix, AZ</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Expected Attendance</span>
+              <span class="meta-value">15,000+ professionals</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Booth Size</span>
+              <span class="meta-value">10x10 ft (Requested)</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Lead Goal</span>
+              <span class="meta-value">75 qualified leads</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Budget Estimate</span>
+              <span class="meta-value">$35,000</span>
+            </div>
+          </div>
+
+          <div class="travel-section">
+            <h4>Travel Information</h4>
+            <p><em>Travel arrangements pending show confirmation</em></p>
+            <div class="grid">
+              <div>
+                <strong>Estimated Flight Cost:</strong><br>
+                <small>$650 per person<br>
+                2 attendees planned</small>
+              </div>
+              <div>
+                <strong>Hotel Options:</strong><br>
+                <small>Researching options near venue<br>
+                Budget: $200/night</small>
+              </div>
+              <div>
+                <strong>Ground Transport:</strong><br>
+                <small>Rental car preferred<br>
+                Estimate: $300 total</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="outline">View Details</button>
+            <button class="outline secondary">Confirm Attendance</button>
+            <button class="outline">Update Information</button>
+            <button class="outline secondary">Decline Show</button>
+          </div>
+        </div>
+
+        <!-- Completed Show -->
+        <div class="tradeshow-card">
+          <div class="tradeshow-header">
+            <div>
+              <h3 class="tradeshow-title">Clean Energy Trade Fair 2023</h3>
+              <p class="tradeshow-subtitle">Chicago McCormick Place • Booth #C156</p>
+            </div>
+            <span class="tradeshow-status status-completed">Completed</span>
+          </div>
+
+          <div class="tradeshow-meta">
+            <div class="meta-item">
+              <span class="meta-label">Event Dates</span>
+              <span class="meta-value">November 15-17, 2023</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Leads Generated</span>
+              <span class="meta-value">142 qualified leads</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Meetings Held</span>
+              <span class="meta-value">38 scheduled meetings</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Follow-up Rate</span>
+              <span class="meta-value">89% completed</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">ROI</span>
+              <span class="meta-value">$285K pipeline generated</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Final Budget</span>
+              <span class="meta-value">$52,400 (Under budget)</span>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="outline">View Full Report</button>
+            <button class="outline secondary">Lead Analysis</button>
+            <button class="outline">Download Files</button>
+            <button class="outline secondary">Copy to New Show</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Schedule Manager Section -->
+      <section id="schedule-manager" style="display: none;">
+        <h2>Schedule Manager</h2>
+
+        <div class="grid">
+          <!-- Add New Schedule Item -->
+          <article>
+            <header>
+              <h3>Add Schedule Item</h3>
+            </header>
+            <form>
+              <select required>
+                <option value="">Select Tradeshow</option>
+                <option value="re-expo-2024">Renewable Energy Expo 2024</option>
+                <option value="wind-power-2024">Wind Power International 2024</option>
+                <option value="solar-summit-2024">Solar Power Summit 2024</option>
+              </select>
+
+              <div class="grid">
+                <input type="date" placeholder="Date" required>
+                <input type="time" placeholder="Start Time" required>
+                <input type="time" placeholder="End Time" required>
+              </div>
+
+              <input type="text" placeholder="Meeting/Activity Title" required>
+              <textarea placeholder="Description and notes" rows="3"></textarea>
+
+              <fieldset>
+                <legend>Priority Level</legend>
+                <label for="priority-high">
+                  <input type="radio" id="priority-high" name="priority" value="high">
+                  High Priority
+                </label>
+                <label for="priority-medium">
+                  <input type="radio" id="priority-medium" name="priority" value="medium" checked>
+                  Medium Priority
+                </label>
+                <label for="priority-low">
+                  <input type="radio" id="priority-low" name="priority" value="low">
+                  Low Priority
+                </label>
+              </fieldset>
+
+              <button type="submit">Add to Schedule</button>
+            </form>
+          </article>
+
+          <!-- Current Schedule -->
+          <article>
+            <header>
+              <h3>Upcoming Schedule - RE Expo 2024</h3>
+            </header>
+
+            <div class="schedule-item priority-high">
+              <div class="schedule-time">March 15, 9:00 AM - 9:30 AM</div>
+              <h4 class="schedule-title">Booth Setup & Final Preparations</h4>
+              <p class="schedule-description">Final booth arrangement, material placement, and team briefing</p>
+            </div>
+
+            <div class="schedule-item priority-high">
+              <div class="schedule-time">March 15, 10:00 AM - 11:00 AM</div>
+              <h4 class="schedule-title">Meeting: GreenTech Solutions</h4>
+              <p class="schedule-description">Strategic partnership discussion with Sarah Mitchell, VP Operations</p>
+            </div>
+
+            <div class="schedule-item priority-medium">
+              <div class="schedule-time">March 15, 2:00 PM - 2:45 PM</div>
+              <h4 class="schedule-title">Product Demo: PB-2000 Series</h4>
+              <p class="schedule-description">Live demonstration for WindPower Industries delegation</p>
+            </div>
+
+            <div class="schedule-item priority-medium">
+              <div class="schedule-time">March 15, 4:30 PM - 5:30 PM</div>
+              <h4 class="schedule-title">Networking Reception</h4>
+              <p class="schedule-description">Industry mixer - Focus on West Coast prospects</p>
+            </div>
+
+            <div class="schedule-item priority-low">
+              <div class="schedule-time">March 16, 11:00 AM - 12:00 PM</div>
+              <h4 class="schedule-title">Competitor Research</h4>
+              <p class="schedule-description">Visit competing booths and gather intelligence</p>
+            </div>
+
+            <div class="schedule-item priority-high">
+              <div class="schedule-time">March 16, 3:00 PM - 4:00 PM</div>
+              <h4 class="schedule-title">Meeting: California Solar Corp</h4>
+              <p class="schedule-description">Contract negotiation for Q2 thermal coating project</p>
+            </div>
+          </article>
+        </div>
+
+        <!-- Schedule Overview -->
+        <article style="margin-top: 2rem;">
+          <header>
+            <h3>Schedule Overview</h3>
+          </header>
+          <div class="overflow-auto">
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Time</th>
+                  <th scope="col">Activity</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>March 15</td>
+                  <td>9:00 AM</td>
+                  <td>Booth Setup</td>
+                  <td><span class="status-badge" style="background: #dc3545; color: white;">High</span></td>
+                  <td>Confirmed</td>
+                  <td><button class="outline secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>March 15</td>
+                  <td>10:00 AM</td>
+                  <td>GreenTech Meeting</td>
+                  <td><span class="status-badge" style="background: #dc3545; color: white;">High</span></td>
+                  <td>Confirmed</td>
+                  <td><button class="outline secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>March 15</td>
+                  <td>2:00 PM</td>
+                  <td>Product Demo</td>
+                  <td><span class="status-badge" style="background: #ffc107; color: black;">Medium</span></td>
+                  <td>Confirmed</td>
+                  <td><button class="outline secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button></td>
+                </tr>
+                <tr>
+                  <td>March 16</td>
+                  <td>3:00 PM</td>
+                  <td>California Solar Meeting</td>
+                  <td><span class="status-badge" style="background: #dc3545; color: white;">High</span></td>
+                  <td>Tentative</td>
+                  <td><button class="outline secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- Activity Log Section -->
+      <section id="activity-log" style="display: none;">
+        <h2>Activity Log</h2>
+
+        <!-- Log New Activity -->
+        <article style="margin-bottom: 2rem;">
+          <header>
+            <h3>Log New Activity</h3>
+          </header>
+          <form>
+            <div class="grid">
+              <select required>
+                <option value="">Select Tradeshow</option>
+                <option value="re-expo-2024">Renewable Energy Expo 2024</option>
+                <option value="wind-power-2024">Wind Power International 2024</option>
+                <option value="clean-energy-2023">Clean Energy Trade Fair 2023</option>
+              </select>
+              <select required>
+                <option value="">Activity Type</option>
+                <option value="lead-capture">Lead Capture</option>
+                <option value="meeting">Meeting</option>
+                <option value="demo">Product Demo</option>
+                <option value="networking">Networking</option>
+                <option value="competitor-intel">Competitor Intelligence</option>
+                <option value="follow-up">Follow-up</option>
+              </select>
+            </div>
+
+            <input type="text" placeholder="Contact/Company Name" required>
+            <input type="email" placeholder="Email Address">
+            <input type="tel" placeholder="Phone Number">
+
+            <textarea placeholder="Activity notes and details..." rows="4" required></textarea>
+
+            <fieldset>
+              <legend>Lead Quality</legend>
+              <label for="quality-hot">
+                <input type="radio" id="quality-hot" name="quality" value="hot">
+                Hot Lead
+              </label>
+              <label for="quality-warm">
+                <input type="radio" id="quality-warm" name="quality" value="warm" checked>
+                Warm Lead
+              </label>
+              <label for="quality-cold">
+                <input type="radio" id="quality-cold" name="quality" value="cold">
+                Cold Lead
+              </label>
+              <label for="quality-info">
+                <input type="radio" id="quality-info" name="quality" value="info">
+                Information Only
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <label for="follow-up-required">
+                <input type="checkbox" id="follow-up-required" name="follow-up" role="switch">
+                Follow-up Required
+              </label>
+            </fieldset>
+
+            <button type="submit">Log Activity</button>
+          </form>
+        </article>
+
+        <!-- Recent Activities -->
+        <h3>Recent Activities</h3>
+
+        <div class="activity-log priority-high">
+          <div class="activity-timestamp">Today, 2:30 PM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Lead Capture:</strong> Met with David Chen from WindPower Industries. Very interested in PB-2000 series for their upcoming Texas wind farm project. Potential $300K deal. Scheduled follow-up call for next week.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-confirmed">Hot Lead</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Follow-up: March 25, 2024</small>
+          </div>
+        </div>
+
+        <div class="activity-log priority-medium">
+          <div class="activity-timestamp">Today, 11:15 AM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Product Demo:</strong> Demonstrated thermal efficiency of PB-1500 coating to Solar Energy Solutions team. Good engagement, requested technical specifications and pricing. Medium interest level.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-pending">Warm Lead</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Follow-up: March 22, 2024</small>
+          </div>
+        </div>
+
+        <div class="activity-log priority-low">
+          <div class="activity-timestamp">Yesterday, 4:45 PM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Networking:</strong> Connected with Maria Rodriguez, Marketing Director at Green Energy Innovations. Exchanged business cards and discussed industry trends. Potential collaboration opportunities.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-upcoming">Warm Lead</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Follow-up: March 30, 2024</small>
+          </div>
+        </div>
+
+        <div class="activity-log">
+          <div class="activity-timestamp">Yesterday, 2:00 PM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Competitor Intelligence:</strong> Visited ThermalTech booth. They're promoting new T-3000 series with similar claims to our PB-2000. Pricing appears 15% higher. Limited technical documentation available.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-completed">Intelligence</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Reported to product team</small>
+          </div>
+        </div>
+
+        <div class="activity-log priority-high">
+          <div class="activity-timestamp">March 14, 3:20 PM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Meeting:</strong> Strategic discussion with GreenTech Solutions procurement team. They have 5 upcoming solar projects requiring thermal management. Potential partnership worth $500K annually.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-confirmed">Hot Lead</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Proposal due: March 28, 2024</small>
+          </div>
+        </div>
+
+        <div class="activity-log priority-medium">
+          <div class="activity-timestamp">March 14, 10:30 AM - Renewable Energy Expo 2024</div>
+          <p class="activity-content">
+            <strong>Lead Capture:</strong> Booth visitor interested in PB-1000 series for small commercial solar installations. Collected contact info: Jennifer Walsh, Sunshine Solar Co.
+          </p>
+          <div style="margin-top: 0.5rem;">
+            <span class="tradeshow-status status-pending">Cold Lead</span>
+            <small style="margin-left: 1rem; color: var(--pico-muted-color);">Follow-up: April 5, 2024</small>
+          </div>
+        </div>
+
+        <!-- Activity Statistics -->
+        <article style="margin-top: 2rem;">
+          <header>
+            <h3>Activity Summary - Current Show</h3>
+          </header>
+          <div class="grid">
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">47</h2>
+              <small>Total Leads</small>
+            </div>
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">12</h2>
+              <small>Hot Leads</small>
+            </div>
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">23</h2>
+              <small>Warm Leads</small>
+            </div>
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">18</h2>
+              <small>Meetings Held</small>
+            </div>
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">6</h2>
+              <small>Demos Given</small>
+            </div>
+            <div style="text-align: center; padding: 1rem;">
+              <h2 style="color: var(--pico-primary); margin: 0;">$850K</h2>
+              <small>Pipeline Value</small>
+            </div>
+          </div>
+        </article>
+
+        <!-- Export Options -->
+        <article style="margin-top: 2rem;">
+          <header>
+            <h3>Export & Reporting</h3>
+          </header>
+          <div class="grid">
+            <button class="outline">Export Lead List (CSV)</button>
+            <button class="outline secondary">Generate Activity Report</button>
+            <button class="outline">Download Contact Cards</button>
+            <button class="outline secondary">Email Summary to Team</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Quick Stats Dashboard -->
+      <section style="margin-top: 3rem;">
+        <h2>Tradeshow Dashboard</h2>
+        <div class="grid">
+          <article style="text-align: center;">
+            <header>
+              <h3 style="color: var(--pico-primary);">2024 Overview</h3>
+            </header>
+            <p style="font-size: 2rem; margin: 0; color: var(--pico-color);">8</p>
+            <small>Shows Planned</small>
+          </article>
+
+          <article style="text-align: center;">
+            <header>
+              <h3 style="color: var(--pico-primary);">Total Investment</h3>
+            </header>
+            <p style="font-size: 2rem; margin: 0; color: var(--pico-color);">$420K</p>
+            <small>Annual Budget</small>
+          </article>
+
+          <article style="text-align: center;">
+            <header>
+              <h3 style="color: var(--pico-primary);">Pipeline Generated</h3>
+            </header>
+            <p style="font-size: 2rem; margin: 0; color: var(--pico-color);">$2.1M</p>
+            <small>YTD from Shows</small>
+          </article>
+
+          <article style="text-align: center;">
+            <header>
+              <h3 style="color: var(--pico-primary);">ROI Target</h3>
+            </header>
+            <p style="font-size: 2rem; margin: 0; color: var(--pico-color);">5:1</p>
+            <small>Pipeline to Investment</small>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+      <div class="grid">
+        <div>
+          <h5>PhazeBreak Coatings</h5>
+          <p>Advanced thermal barrier solutions for renewable energy applications.</p>
+        </div>
+        <div>
+          <h6>Tradeshow Contacts</h6>
+          <p>
+            Events Manager: <a href="mailto:events@phazebreak.com">events@phazebreak.com</a><br>
+            Travel Coordinator: <a href="tel:+1-800-PHAZEBRK">1-800-PHAZEBRK ext. 234</a>
+          </p>
+        </div>
+        <div>
+          <h6>Quick Links</h6>
+          <p>
+            <a href="#" onclick="event.preventDefault()">Marketing Materials</a><br>
+            <a href="#" onclick="event.preventDefault()">Travel Policy</a><br>
+            <a href="#" onclick="event.preventDefault()">Expense Reports</a>
+          </p>
+        </div>
+      </div>
+      <hr>
+      <small>
+        © 2024 PhazeBreak Coatings. All rights reserved. •
+        <a href="#privacy">Privacy Policy</a> •
+        <a href="#terms">Terms of Use</a> •
+        Last updated: <span id="last-updated">March 15, 2024 16:45 UTC</span>
+      </small>
+    </footer>
+
+    <!-- Modal for Adding New Show -->
+    <dialog id="add-show-modal">
+      <article>
+        <header>
+          <button aria-label="Close" rel="prev" onclick="event.preventDefault()"></button>
+          <h3>Add New Tradeshow</h3>
+        </header>
+        <form>
+          <input type="text" placeholder="Tradeshow Name" required>
+          <input type="text" placeholder="Location" required>
+
+          <div class="grid">
+            <input type="date" placeholder="Start Date" required>
+            <input type="date" placeholder="End Date" required>
+          </div>
+
+          <input type="text" placeholder="Booth Number">
+          <input type="text" placeholder="Expected Attendance">
+
+          <textarea placeholder="Notes and objectives..." rows="3"></textarea>
+
+          <select required>
+            <option value="">Priority Level</option>
+            <option value="high">High Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+        </form>
+        <footer>
+          <button role="button" class="secondary" onclick="event.preventDefault()">Cancel</button>
+          <button onclick="event.preventDefault()">Add Tradeshow</button>
+        </footer>
+      </article>
+    </dialog>
+  </body>
+</html>
