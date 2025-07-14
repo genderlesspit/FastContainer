@@ -20,6 +20,8 @@ import uvicorn
 from functools import cached_property
 from loguru import logger as log
 from typing import Optional
+
+from starlette.templating import Jinja2Templates
 from toomanyports import PortManager
 
 import loguru
@@ -32,7 +34,8 @@ from singleton_decorator import singleton
 
 from thread_manager import ManagedThread
 from fastapi import FastAPI, Request
-import fastauth
+import fast_auth
+
 
 # @dataclass
 # class MicroserviceSchema:

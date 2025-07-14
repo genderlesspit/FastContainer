@@ -13,9 +13,15 @@ from loguru import logger as log
 from pydantic import BaseModel
 from pyzurecli import AzureCLI, AzureCLIAppRegistration
 from singleton_decorator import singleton
+from starlette.templating import Jinja2Templates
 
 from thread_manager import ManagedThread
-from . import templates
+
+import fast_auth
+print(f"fastauth module: {fast_auth.__file__}")
+print(f"fastauth contents: {dir(fast_auth)}")
+
+from fast_auth import TEMPLATES, TEMPLATE_DIR, CWD
 
 DEBUG = True
 
@@ -23,6 +29,7 @@ from .oauth_token_manager import (
     AccessToken,
     PKCEChallenge, MultiTenantTokenManager, TokenStorage, GraphAPI, ManagedOAuthClient
 )
+
 
 
 # noinspection PyDeprecation
@@ -140,8 +147,8 @@ class AuthServer(FastAPI):
 
     @cached_property
     def path(self):
-        from fastauth import cwd
-        return cwd
+        from fast_auth import CWD
+        return CWD
 
     @cached_property
     def url(self):
@@ -314,7 +321,7 @@ class AuthServer(FastAPI):
                 emails = await oauth_client.get_user_data("emails")
                 files = await oauth_client.get_user_data("files")
 
-                return templates.TemplateResponse("dashboard.html", {
+                return TEMPLATES.TemplateResponse("dashboard.html", {
                     "request": request,
                     "user_display_name": "null",
                     "user_email": "null",
@@ -348,7 +355,7 @@ class AuthServer(FastAPI):
             app_registration = await self.app_registration
             consent_url = await app_registration.generate_admin_consent_url()
 
-            return templates.TemplateResponse("admin-consent.html", {
+            return TEMPLATES.TemplateResponse("admin-consent.html", {
                 "request": request,
                 "admin_consent_url": consent_url,
             })
@@ -447,7 +454,7 @@ class AuthServer(FastAPI):
 
     def _error_response(self, request: Request, error: str, description: str = None):
         """Generate error response"""
-        return templates.TemplateResponse("error.html", {
+        return TEMPLATES.TemplateResponse("error.html", {
             "request": request,
             "error_message": error,
             "error_description": description
@@ -456,7 +463,7 @@ class AuthServer(FastAPI):
     def _success_response(self, request: Request, token: AccessToken, user_display: str, user_email: str):
         """Generate success response"""
 
-        return templates.TemplateResponse("success.html", {
+        return TEMPLATES.TemplateResponse("success.html", {
             "request": request,
             "user_display_name": user_display,
             "user_email": user_email,
@@ -467,7 +474,7 @@ class AuthServer(FastAPI):
 
     def _dashboard_html(self, request: Request, profile: dict, emails: dict, files: dict):
         """Generate dashboard HTML"""
-        return templates.TemplateResponse("dashboard.html", {
+        return TEMPLATES.TemplateResponse("dashboard.html", {
             "request": request,
             "user_display_name": "null",
             "user_email": "null",
