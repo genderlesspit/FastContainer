@@ -1,9 +1,7 @@
 import secrets
 import threading
-import time
 from datetime import datetime, timedelta
 from functools import cached_property
-from pathlib import Path
 from typing import Dict, Optional
 
 import uvicorn
@@ -11,13 +9,13 @@ from async_property import async_cached_property
 from fastapi import FastAPI, Request
 from fastapi import HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from loguru import logger as log
 from pydantic import BaseModel
 from pyzurecli import AzureCLI, AzureCLIAppRegistration
 from singleton_decorator import singleton
 
 from thread_manager import ManagedThread
+from . import templates
 
 DEBUG = True
 
@@ -81,9 +79,6 @@ class CachedUser(BaseModel):
     expires_at: str
     has_mail_access: bool
     has_files_access: bool
-
-
-templates = Jinja2Templates(directory="templates")
 
 
 class AuthUrlBuilder:
@@ -485,7 +480,7 @@ class AuthServer(FastAPI):
         """Extract user ID from session token - implement based on your session format"""
         try:
             import jwt
-            payload = jwt.decode(session_token, options={"verify_signature": False}) #type: ignore
+            payload = jwt.decode(session_token, options={"verify_signature": False})  # type: ignore
             return payload.get("user_id") or payload.get("sub") or payload.get("email")
         except:
             # Fallback: treat as direct user identifier
