@@ -145,7 +145,8 @@ class AuthServer(FastAPI):
 
     @cached_property
     def path(self):
-        return Path.cwd()
+        from fastauth import cwd
+        return cwd
 
     @cached_property
     def url(self):
