@@ -89,6 +89,10 @@ def stub_from_def_node(node: ast.FunctionDef | ast.ClassDef):
 
     elif start_line is not None and stop_line is not None:
         log.debug(f"{REPR}: Found delimiters at {start_line, stop_line}")
+        with open(CALLER.PYI, 'a', encoding="utf-8") as f:
+            f.write(f"{start_delimiter}\n")
+            f.write(f"{unparsed}\n")
+            f.write(f"{stop_delimiter}\n")
         raise NotImplementedError
 
 
