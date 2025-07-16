@@ -19,3 +19,7 @@ from .oauth_token_manager import ManagedOAuthClient, MultiTenantTokenManager, To
 
 auth_server = AuthServer()
 auth_server.thread.start()
+
+URL = auth_server.url
+
+from .authed_server import FastAuth

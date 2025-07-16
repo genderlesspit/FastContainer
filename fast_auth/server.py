@@ -11,7 +11,7 @@ from fastapi import HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from loguru import logger as log
 from pydantic import BaseModel
-from pyzurecli import AzureCLI, AzureCLIAppRegistration
+from pyzurecli import AzureCLI
 from singleton_decorator import singleton
 from starlette.templating import Jinja2Templates
 
@@ -160,10 +160,10 @@ class AuthServer(FastAPI):
 
     @async_cached_property
     async def azure_cli(self) -> AzureCLI:
-        return await AzureCLI.__async_init__(self.path)
+        return await AzureCLI(self.path)
 
     @async_cached_property
-    async def app_registration(self) -> AzureCLIAppRegistration:
+    async def app_registration(self):
         azure_cli = await self.azure_cli
         return await azure_cli.app_registration
 

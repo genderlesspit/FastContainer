@@ -1,16 +1,10 @@
 import asyncio
-import httpx
-import logging
-import json
 from dataclasses import dataclass, asdict
-from typing import List, Optional, Dict, Any, Union
 from pathlib import Path
-import mimetypes
+from typing import List, Optional
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, Response, FileResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 from loguru import logger as log
 
 from fast_template import FastTemplates
@@ -33,14 +27,15 @@ class PageConfig:
     config_file: Optional[str] = None  # for SPAs - package.json, config.json etc
     template_dir: Optional[str] = None  # track which directory the template is in
 
+
 async def discover_pages() -> List[PageConfig]:
     """Discover all types of pages: static HTML, SPAs, and configured services"""
     discovered_pages = []
 
     # Check multiple directories for different types of content
     directories_to_check = [
-        (Path.cwd() / "static", "static"),      # Traditional static HTML
-        (Path.cwd() / "apps", "spa"),           # SPAs and complex apps
+        (Path.cwd() / "static", "static"),  # Traditional static HTML
+        (Path.cwd() / "apps", "spa"),  # SPAs and complex apps
     ]
 
     for base_dir, default_type in directories_to_check:
@@ -73,6 +68,7 @@ async def discover_pages() -> List[PageConfig]:
 
     return discovered_pages
 
+
 async def create_static_page_config(html_file: Path, base_dir: Path) -> PageConfig:
     """Create PageConfig for static HTML files"""
     page_name = html_file.stem
@@ -95,6 +91,7 @@ async def create_static_page_config(html_file: Path, base_dir: Path) -> PageConf
         auto_discovered=True
     )
 
+
 async def extract_title_from_html(html_file: Path) -> Optional[str]:
     """Extract title from HTML file's <title> tag"""
     try:
@@ -111,6 +108,7 @@ async def extract_title_from_html(html_file: Path) -> Optional[str]:
 
     return None
 
+
 def generate_color_from_name(name: str) -> str:
     """Generate a consistent color hex code based on the page name"""
     hash_value = hash(name)
@@ -119,8 +117,9 @@ def generate_color_from_name(name: str) -> str:
     lightness = 50
 
     import colorsys
-    r, g, b = colorsys.hls_to_rgb(hue/360, lightness/100, saturation/100)
-    return f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+    r, g, b = colorsys.hls_to_rgb(hue / 360, lightness / 100, saturation / 100)
+    return f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
+
 
 async def get_all_pages() -> List[PageConfig]:
     """Get all pages auto-discovered"""
@@ -135,8 +134,10 @@ async def get_all_pages() -> List[PageConfig]:
 
     return all_pages
 
+
 # Global pages cache
 PAGES: List[PageConfig] = []
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -144,6 +145,7 @@ async def startup_event():
     global PAGES
     PAGES = await get_all_pages()
     log.debug(f"Initialized with {len(PAGES)} total pages")
+
 
 @app.get("/refresh-pages")
 async def refresh_pages():
@@ -157,6 +159,7 @@ async def refresh_pages():
         "pages": [asdict(p) for p in PAGES]
     }
 
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Main container page that lists all available pages"""
@@ -166,7 +169,7 @@ async def home(request: Request):
     for template_dir in ["index", "templates", "."]:
         template_path = Path(template_dir) / "container.html"
         if template_path.exists():
-            env = await FastTemplates(template_dir)
+            env = FastTemplates(template_dir)
             container_template = env
             break
 
@@ -176,6 +179,7 @@ async def home(request: Request):
         "request": request,
         "pages": PAGES
     })
+
 
 @app.get("/page/{page_name}")
 async def get_page(page_name: str, request: Request):
@@ -198,7 +202,7 @@ async def get_page(page_name: str, request: Request):
             raise HTTPException(status_code=404, detail=f"Template file not found: {page.template}")
 
         # Get the template environment for this directory
-        template_env = await FastTemplates(template_dir)
+        template_env = FastTemplates(template_dir)
 
         # Render the template
         return template_env.TemplateResponse(page.template, {
@@ -211,13 +215,13 @@ if __name__ == "__main__":
 
     # Setup directories
     cwd = Path.cwd()
-    directories = ["templates", "static", "apps", "pages", "sites", "index"]
+    directories = ["static", "apps", "index"]
 
     for dir_name in directories:
         (cwd / dir_name).mkdir(exist_ok=True)
 
-    print("Starting enhanced containerizer...")
-    print(f"Created directories: {', '.join(directories)}")
-    print("Visit /refresh-pages to reload during development")
+    log.info("Starting FastContainer...")
+    log.debug(f"Created directories: {', '.join(directories)}")
+    log.debug("Visit /refresh-pages to reload during development")
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(app, host="localhost", port=8000, log_level="info")
