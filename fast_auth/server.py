@@ -268,7 +268,7 @@ class AuthServer(FastAPI):
                 user_email = user_data.get('mail') or user_data.get('userPrincipalName', 'No email')
 
                 try:
-                    if self.return_url is not None:
+                    if self.return_url is not None or "None":
                         log.debug(f"{self}: Found return url! Redirecting to {return_url}!")
                         return RedirectResponse(return_url)
                 except Exception:

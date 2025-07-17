@@ -1,3 +1,4 @@
+import time
 from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
@@ -8,6 +9,9 @@ import aiohttp
 import toml
 from fastapi import FastAPI
 from loguru import logger as log
+
+from fast_auth import FastAuth
+
 
 @dataclass
 class Headers:
@@ -156,28 +160,25 @@ a = API(Path(Path.cwd().parent / "test.toml"))
 log.debug(a.api_headers)
 log.debug(a.api_routes)
 
-class APIGateway(API, FastAPI):
-
-    def __init__(self, path: Path):
-        API.__init__(self, path)
-        FastAPI.__init__(self)
-
-
-b = APIGateway(Path(Path.cwd().parent / "test.toml"))
-log.debug(b.__dict__)
+@dataclass
+class Response:
+    status: int
+    method: str
+    headers: dict
+    body: Any
 
 class Receptionist(API):
-    cache: dict = {}
+    cache: dict[str | SimpleNamespace] = {}
 
     def __init__(self, path):
-        super().__init__(path=path)
+        API.__init__(self, path=path)
 
-    async def request(self,
+    async def api_request(self,
                       method: str,
                       route: str,
                       append: str = "",
                       format: dict = None,
-                      force_refresh: bool = False, **kw):
+                      force_refresh: bool = False, **kw) -> Response:
         try:
             path = self.api_routes[route]
         except KeyError:
@@ -188,13 +189,12 @@ class Receptionist(API):
         if append:
             path += append
 
-        if force_refresh is False:
-            cached = self._get_cache(path)
-            if cached:
-                log.debug(f"{self}: Cache HIT for {path}")
-                return cached
-
         headers = self.api_headers.as_dict
+
+        if not force_refresh:
+            if path in self.cache: return self.cache[path]
+
+        log.debug(f"{self}: Attempting request to API:\n  - method={method}\n  - path={path}")
 
         async with aiohttp.ClientSession(headers=headers) as ses:
             async with ses.request(method.upper(), path, **kw) as res:
@@ -208,32 +208,55 @@ class Receptionist(API):
                     content = await res.text()  # always fallback
                     log.warning(f"{self}: Bad response decode → {e} | Fallback body: {content}")
 
-                out = SimpleNamespace(
-                    status_code=res.status,
-                    headers=dict(res.headers),
-                    body=content
-                )
-
-                out = SimpleNamespace(
-                    status=out.status_code,
+                out = Response(
+                    status=res.status,
                     method=method,
-                    headers=self.api_headers.index,
-                    url=path,
-                    body=kw.get("json") or kw.get("data"),
-                    response=out.body
+                    headers=dict(res.headers),
+                    body=content,
                 )
 
-                self.cache
-                return out
+                self.cache[path] = out
+                return self.cache[path]
 
-    async def get(self, route, append=None, format=None, force_refresh=False, **kw):
-        return await self.request("get", route, append=append, format=format, force_refresh=force_refresh, **kw)
+    async def api_get(self, route, append=None, format=None, force_refresh=False, **kw):
+        return await self.api_request("get", route, append=append, format=format, force_refresh=force_refresh, **kw)
 
-    async def post(self, route, append=None, format=None, force_refresh=False, **kw):
-        return await self.request("post", route, append=append, format=format, force_refresh=force_refresh, **kw)
+    async def api_post(self, route, append=None, format=None, force_refresh=False, **kw):
+        return await self.api_request("post", route, append=append, format=format, force_refresh=force_refresh, **kw)
 
-    async def put(self, route, append=None, format=None, force_refresh=False, **kw):
-        return await self.request("put", route, append=append, format=format, force_refresh=force_refresh, **kw)
+    async def api_put(self, route, append=None, format=None, force_refresh=False, **kw):
+        return await self.api_request("put", route, append=append, format=format, force_refresh=force_refresh, **kw)
 
-    async def delete(self, route, append=None, format=None, force_refresh=False, **kw):
-        return await self.request("delete", route, append=append, format=format, force_refresh=force_refresh, **kw)
+    async def api_delete(self, route, append=None, format=None, force_refresh=False, **kw):
+        return await self.api_request("delete", route, append=append, format=format, force_refresh=force_refresh, **kw)
+
+class APIGateway(Receptionist, FastAuth):
+
+    def __init__(self, path: Path):
+        Receptionist.__init__(self, path)
+        FastAuth.__init__(self)
+
+        @self.get("/")
+        async def _index():
+            return self.api_routes.routes
+
+        @self.get("/cache")
+        async def _cache():
+            return self.cache
+
+        @self.get("/cache/{key}")
+        async def _cache_key(key):
+            return self.cache[key]
+
+        @self.get("/api/{method}/{api_route}/")
+        async def _request_from_api(method, api_route):
+            if method is None or "null": method = "get"
+            valid_methods = ["get", "post", "put", "delete"]
+            if method not in valid_methods: raise ValueError(f"{method} is not included within {valid_methods}")
+            if api_route not in self.api_routes.routes: raise ValueError(f"{api_route} is not in {self.api_routes}")
+
+            return await self.api_request(method, api_route)
+
+# b = APIGateway(Path(Path.cwd().parent / "test.toml"))
+# b.thread.start()
+# time.sleep(9000)
