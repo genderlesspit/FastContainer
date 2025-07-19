@@ -1,42 +1,57 @@
-from functools import cached_property
+import asyncio
+import time
+from pathlib import Path
+from typing import Any
 
-import uvicorn
+import requests
 from fastapi import FastAPI
-
 from loguru import logger as log
-from thread_manager import ManagedThread
 from toomanyports import PortManager
+from toomanythreads import ThreadedServer
+
+from microservices.core import PublicApp
+from pycloudflare import Cloudflare
 
 
-class Gateway(FastAPI):
+class Gateway(Cloudflare):
     def __init__(
             self,
             host: str = None,
             port: int = None,
-            reload: bool = False,
+            cfg: Path = None,
+            app: Any = None,
             verbose: bool = True,
     ) -> None:
         self.host = "localhost" if host is None else host
         self.port = PortManager.random_port() if port is None else port
+        if cfg: Cloudflare.__init__(self, toml=cfg)
+        else: Cloudflare.__init__(self)
+        self.cloudflare_cfg.service_url = self.url
+
+        if app: self.app = app
+        else: self.app = PublicApp()
+
         self.verbose = verbose
-        super().__init__(debug=self.verbose)
         if self.verbose: log.success(f"[{self}]: Initialized successfully!\n  - host={self.host}\n  - port={self.port}")
 
-    @cached_property
-    def uvicorn_cfg(self) -> uvicorn.Config:
-        return uvicorn.Config(
-            app=self,
-            host=self.host,
-            port=self.port,
-            # reload=True,
-            # log_config=,
-        )
+        @self.get("/")
+        async def index(path):
+            url = app.url
+            log.debug(f"{self}: Retrieving {url} from {self.app}")
+            requests.get(url)
+            log.debug(url)
+            return None
 
-    @cached_property
-    def thread(self) -> threading.Thread:  # type: ignore
-        def proc(self):
-            if self.verbose: log.info(f"[{self}]: Launching microservice on {self.host}:{self.port}")
-            server = uvicorn.Server(config=self.uvicorn_cfg)
-            server.run()
+    async def launch(self):
+        loc = self.thread
+        glo = await self.cloudflare_thread
+        loc.start()
+        glo.start()
 
-        return ManagedThread(proc, self)
+async def debug():
+    g = Gateway()
+    await g.launch()
+
+if __name__ == "__main__":
+    asyncio.run(debug())
+    time.sleep(1000)

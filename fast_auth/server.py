@@ -160,17 +160,17 @@ class AuthServer(FastAPI):
 
     @async_cached_property
     async def azure_cli(self) -> AzureCLI:
-        return await AzureCLI(self.path)
+        return AzureCLI(self.path)
 
     @async_cached_property
     async def app_registration(self):
         azure_cli = await self.azure_cli
-        return await azure_cli.app_registration
+        return azure_cli.app_registration
 
     @async_cached_property
     async def client_id(self) -> str:
         app_registration = await self.app_registration
-        return await app_registration.client_id
+        return app_registration.client_id
 
     @async_cached_property
     async def oauth_client(self) -> ManagedOAuthClient:
@@ -267,12 +267,12 @@ class AuthServer(FastAPI):
                 user_display = user_data.get('displayName', 'User')
                 user_email = user_data.get('mail') or user_data.get('userPrincipalName', 'No email')
 
-                try:
-                    if self.return_url is not None or "None":
-                        log.debug(f"{self}: Found return url! Redirecting to {return_url}!")
-                        return RedirectResponse(return_url)
-                except Exception:
-                    pass
+                # try:
+                #     if self.return_url is not None or "None":
+                #         log.debug(f"{self}: Found return url! Redirecting to {return_url}!")
+                #         return RedirectResponse(return_url)
+                # except Exception:
+                #     pass
 
                 return self._success_response(request, token, user_display, user_email)
 
@@ -392,6 +392,7 @@ class AuthServer(FastAPI):
 
                 # Fetch user data and cache it
                 log.debug(f"📥 Fetching and caching user data for: {user_id}")
+                return self._success_response(request, "null", "null", "null")
                 user_data = await oauth_client.get_user_data("profile")
 
                 # Cache the user

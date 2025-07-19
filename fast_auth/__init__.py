@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 from pathlib import Path
 
@@ -18,6 +19,14 @@ from .oauth_token_manager import ManagedOAuthClient, MultiTenantTokenManager, To
     PKCEChallenge
 
 auth_server = AuthServer()
+
+async def _init():
+    await auth_server.azure_cli
+    await auth_server.app_registration
+    await auth_server.client_id
+
+asyncio.run(_init())
+
 auth_server.thread.start()
 
 URL = auth_server.url

@@ -5,9 +5,10 @@ from functools import cached_property
 
 import httpx
 import uvicorn
+from aiohttp.abc import HTTPException
 from fastapi import FastAPI, Request
 from loguru import logger as log
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, JSONResponse
 from thread_manager import ManagedThread
 from toomanyports import PortManager
 
@@ -35,7 +36,7 @@ class FastAuth(FastAPI):
             from fast_auth import auth_server
             while not auth_server.thread.is_alive():
                 time.sleep(1)
-            auth_server.return_url = request.base_url
+            auth_server.return_url = request.url
 
             session = request.cookies.get("session")
             if not session:
@@ -68,14 +69,17 @@ class FastAuth(FastAPI):
                         redirect_response.set_cookie("session", session, max_age=3600 * 8)
                         return redirect_response
 
-                except:
-                    pass
+                    if not response.status_code == 200 or 302:
+                        return JSONResponse("i messed up lol ")
 
-            log.warning("[FastAuth]: Continuing without user...")
-            response_obj = await call_next(request)
-            if not request.cookies.get("session"):
-                response_obj.set_cookie("session", session, max_age=3600 * 8)
-            return response_obj
+                except Exception as e:
+                    return JSONResponse("i messed up lol ")
+            #
+            # log.warning("[FastAuth]: Continuing without user...")
+            # response_obj = await call_next(request)
+            # if not request.cookies.get("session"):
+            #     response_obj.set_cookie("session", session, max_age=3600 * 8)
+            # return response_obj
 
     @cached_property
     def uvicorn_cfg(self) -> uvicorn.Config:
